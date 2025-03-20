@@ -3,15 +3,12 @@ package terminodiff.terminodiff.engine.graph
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import org.apache.logging.log4j.kotlin.Logging
 import org.jgrapht.Graph
 import org.jgrapht.graph.builder.GraphTypeBuilder
 import org.jgrapht.traverse.AbstractGraphIterator
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.ui.graphs.ColorRegistry
-
-private val logger: Logger = LoggerFactory.getLogger(CombinedGraphBuilder::class.java)
 
 class CombinedGraphBuilder {
 
@@ -42,7 +39,9 @@ class CombinedGraphBuilder {
 }
 
 private fun emptyGraph(): CombinedGraph =
-    GraphTypeBuilder.directed<CombinedVertex, CombinedEdge>().allowingSelfLoops(false).weighted(false)
+    GraphTypeBuilder.directed<CombinedVertex, CombinedEdge>()
+        .allowingSelfLoops(true)
+        .weighted(false)
         .edgeClass(CombinedEdge::class.java).buildGraph()
 
 data class CombinedEdge(
@@ -82,11 +81,7 @@ data class CombinedVertex(
 fun CombinedGraph.addCombinedEdge(edge: CombinedEdge) {
     val fromNode = this.vertexSet().find { it.code == edge.fromCode } ?: return
     val toNode = this.vertexSet().find { it.code == edge.toCode } ?: return
-    if (fromNode != toNode) {
-        this.addEdge(fromNode, toNode, edge)
-    } else {
-        logger.warn("Cyclic edge for node $fromNode to $toNode (property ${edge.property})")
-    }
+    this.addEdge(fromNode, toNode, edge)
 }
 
 fun CombinedGraph.getEdgesConnectedToVertex(vertex: CombinedVertex) = this.edgeSet().filter {
@@ -102,13 +97,14 @@ class DiffEdgeTraversal(
     private val startingVertex: CombinedVertex,
     private val radius: Int,
 ) : AbstractGraphIterator<CombinedVertex, CombinedEdge>(graph) {
-    private val logger: Logger = LoggerFactory.getLogger(DiffEdgeTraversal::class.java)
     private val subgraph: CombinedGraph = emptyGraph()
 
     private val edgeStack = ArrayDeque<CombinedEdge>()
     private val visitedNodeDepths = mutableMapOf<CombinedVertex, Int>()
     private val visitedEdges = mutableSetOf<CombinedEdge>()
-    var iteration = 0
+    private var iteration = 0
+
+    companion object : Logging
 
     init {
         val edgesFromStarting = graph.getEdgesConnectedToVertex(startingVertex).sortedBy { it.toCode }
@@ -148,17 +144,18 @@ class DiffEdgeTraversal(
         while (hasNext()) {
             val nextNode = next()
             logger.debug("Iteration ${++iteration}")
-            logger.debug("  - Next vertex: {}", nextNode)
+            logger.debug { "  - Next vertex: $nextNode" }
             logger.debug("  - Edge stack (${edgeStack.count()}): ${edgeStack.joinToString()}")
-            logger.debug("  - Node depths (${visitedNodeDepths.count()}): ${
-                visitedNodeDepths.entries.joinToString {
-                    "${it.key.code} (${it.key.side}): ${it.value}"
-                }
-            }")
+            logger.debug(
+                "  - Node depths (${visitedNodeDepths.count()}): ${
+                    visitedNodeDepths.entries.joinToString {
+                        "${it.key.code} (${it.key.side}): ${it.value}"
+                    }
+                }")
             logger.debug("  - visited edges (${visitedEdges.count()}): ${visitedEdges.joinToString()}")
         }
         visitedNodeDepths.keys.forEach(subgraph::addVertex)
-        visitedEdges.forEach(subgraph::addCombinedEdge)
+        visitedEdges.forEach { edge -> subgraph.addCombinedEdge(edge) }
         logger.info("Built subgraph for focus concept '${startingVertex.code}' (${startingVertex.side}) with " + "radius=$radius in $iteration iterations. Got ${subgraph.vertexSet().size} vertices and ${subgraph.edgeSet().size} edges.")
         return subgraph
     }

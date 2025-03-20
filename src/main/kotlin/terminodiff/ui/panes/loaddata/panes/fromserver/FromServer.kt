@@ -24,10 +24,9 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.apache.logging.log4j.kotlin.Logging
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.CodeSystem
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.preferences.AppPreferences
 import terminodiff.terminodiff.engine.resources.InputResource
@@ -43,7 +42,7 @@ import terminodiff.ui.util.ColumnSpec
 import terminodiff.ui.util.LazyTable
 import java.util.*
 
-private val logger: Logger = LoggerFactory.getLogger("FromServerScreen")
+object FromServer : Logging
 
 @Composable
 fun FromServerScreenWrapper(
@@ -107,11 +106,11 @@ private suspend fun listCodeSystems(
         appendPathSegments("CodeSystem")
         parameters.append("_elements", "url,id,version,name,title,link,content")
     }.build()
-    logger.debug("Requesting resource bundle from {}", codeSystemUrl)
+    FromServer.logger.debug { "Requesting resource bundle from $codeSystemUrl" }
     val list = retrieveBundleOfDownloadableResources(ktorClient, codeSystemUrl, fhirContext)
     list?.sortedBy { it.canonicalUrl }?.sortedBy { it.version }
 } catch (e: Exception) {
-    logger.info("Error requesting from FHIR Base $urlString: ${e.message}")
+    FromServer.logger.info("Error requesting from FHIR Base $urlString: ${e.message}")
     null
 }
 
@@ -134,7 +133,7 @@ suspend fun retrieveBundleOfDownloadableResources(
             }
         }
         if (!bundleRx.status.isSuccess()) {
-            logger.debug("GET rx to {} not successful: {}", thisUrl, bundleRx.status)
+            FromServer.logger.debug("GET rx to $thisUrl not successful: ${bundleRx.status}")
             return null
         } else {
             try {
@@ -165,14 +164,14 @@ suspend fun retrieveBundleOfDownloadableResources(
                     }
                 }
                 resources.addAll(entries)
-                logger.debug("Read a page of ${entries.size}, now read ${resources.size}")
+                FromServer.logger.debug { "Read a page of ${entries.size}, now read ${resources.size}" }
                 nextUrl = bundle.getLink("next")?.url?.let { Url(it) }
             } catch (e: DataFormatException) {
                 return null
             }
         }
     }
-    logger.info("Retrieved bundle with ${resources.count()} resources from $initialUrl")
+    FromServer.logger.info("Retrieved bundle with ${resources.count()} resources from $initialUrl")
     return resources.sortedBy { it.canonicalUrl }.sortedBy { it.version }
 }
 
@@ -226,7 +225,7 @@ fun FromServerScreen(
         }
 
         resourceList != null -> {
-            logger.debug("resource list (${resourceList.size}): ${resourceList.joinToString(limit = 3)}")
+            FromServer.logger.debug { "resource list (${resourceList.size}): ${resourceList.joinToString(limit = 3)}" }
             ListOfResources(
                 resourceList = resourceList,
                 lazyListState = lazyListState,

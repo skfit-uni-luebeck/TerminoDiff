@@ -3,9 +3,8 @@ package terminodiff.engine.resources
 import androidx.compose.runtime.*
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.parser.DataFormatException
+import org.apache.logging.log4j.kotlin.Logging
 import org.hl7.fhir.r4.model.CodeSystem
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import terminodiff.engine.concepts.ConceptDiffItem
 import terminodiff.engine.graph.CodeSystemDiffBuilder
 import terminodiff.engine.graph.CodeSystemGraphBuilder
@@ -16,9 +15,9 @@ import java.util.*
 import kotlin.io.path.absolute
 import kotlin.io.path.writer
 
-private val logger: Logger = LoggerFactory.getILoggerFactory().getLogger("DiffDataContainer")
-
 class DiffDataContainer(private val fhirContext: FhirContext, strings: LocalizedStrings) {
+
+    companion object: Logging
 
     var localizedStrings by mutableStateOf(strings)
     var loadState: UUID by mutableStateOf(UUID.randomUUID())

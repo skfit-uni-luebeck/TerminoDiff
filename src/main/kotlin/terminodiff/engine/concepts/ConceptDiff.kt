@@ -1,8 +1,7 @@
 package terminodiff.engine.concepts
 
+import org.apache.logging.log4j.kotlin.Logging
 import org.hl7.fhir.r4.model.CodeSystem
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import terminodiff.engine.graph.FhirConceptDetails
 import terminodiff.engine.graph.PropertyMap
 import terminodiff.i18n.LocalizedStrings
@@ -11,8 +10,6 @@ import terminodiff.terminodiff.engine.metadata.formatCoding
 typealias PropertyDiff = List<PropertyDiffResult>
 typealias DesignationKey = Pair<String?, String?>
 typealias DesignationDiff = List<KeyedListDiffResult<DesignationKey, String>>
-
-private val logger: Logger = LoggerFactory.getLogger("ConceptDiff")
 
 data class ConceptDiff(
     val conceptComparison: List<ConceptDiffResult>,
@@ -25,7 +22,7 @@ data class ConceptDiff(
         }]"
     }
 
-    companion object {
+    companion object: Logging {
 
         private val diffItems =
             listOf(ConceptDiffItem({ display }, { display }), ConceptDiffItem({ definition }, { definition }))

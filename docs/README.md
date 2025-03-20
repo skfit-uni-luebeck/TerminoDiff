@@ -9,7 +9,7 @@ compare [HL7 FHIR CodeSystem resources](https://www.hl7.org/fhir/codesystem.html
 
 This work was presented at the Medical Informatics Europe 2022 conference. The paper is available as follows (CC-BY-NC):
 
-> Wiedekopf J, Drenkhahn C, Rosenau L, Ulrich H, Kock-Schoppenhauer AK, Ingenerf J. TerminoDiff - Detecting Semantic Differences in HL7 FHIR CodeSystems. Stud Health Technol Inform. 2022 May 25;294:362-366. doi: [10.3233/SHTI220475](doi.org/10.3233/SHTI220475). PMID: 35612097.
+> Wiedekopf J, Drenkhahn C, Rosenau L, Ulrich H, Kock-Schoppenhauer AK, Ingenerf J. TerminoDiff - Detecting Semantic Differences in HL7 FHIR CodeSystems. Stud Health Technol Inform. 2022 May 25;294:362-366. doi: [10.3233/SHTI220475](https://doi.org/10.3233/SHTI220475). PMID: 35612097.
  
 ## Table of Contents
 
@@ -204,7 +204,6 @@ library from Android over to the desktop, allowing a Kotlin-first approach to GU
 We utilize the following libraries alongside *Compose*:
 
 - [HAPI FHIR](https://hapifhir.io) for processing FHIR resources
-- [slf4j](https://www.slf4j.org) for logging
 - [JGraphT](https://jgrapht.org) for representation of CodeSystem and diff graphs
 - [jungrapht-visualization](https://github.com/tomnelson/jungrapht-visualization) for drawing the graphs (using Swing)
 - [colormap](https://github.com/mahdilamb/colormap) for the colormap in the graph visualizations
@@ -219,7 +218,7 @@ We utilize the following libraries alongside *Compose*:
 ### Localization
 
 The localization framework was built from scratch in the
-file [LocalizedStrings.kt](src/main/kotlin/terminodiff/i18n/LocalizedStrings.kt), since no suitable alternative for
+file [LocalizedStrings.kt](../src/main/kotlin/terminodiff/i18n/LocalizedStrings.kt), since no suitable alternative for
 localization in Kotlin could be found. Currently, we support English (default) and German strings. Every component that
 displays strings receives an instance of `LocalizedStrings`, which declares a number of properties that are implemented
 in `EnglishStrings` and `GermanStrings`. Default arguments in `LocalizesStrings` represent strings that are identical in
@@ -255,7 +254,7 @@ operations, [explained in more detail in the documentation](https://github.com/t
 
 We have implemented a very generic difference engine for the metadata table, so that new diff items can be added very
 easily. Most elements are basically string comparisons, which can be added using a single line of code
-in [MetadataDiffItems.kt](src/main/kotlin/terminodiff/engine/metadata/MetadataDiff.kt) (
+in [MetadataDiffItems.kt](../src/main/kotlin/terminodiff/engine/metadata/MetadataDiff.kt) (
 function `generateComparisonDefinitions`). Stuff like `identifiers` are a bit more involved, since these require the
 definition of a key and a string representation of the value, as well as column definitions for the key columns (to
 render the details dialog shown above), but are also not very challenging to implement.
@@ -279,7 +278,7 @@ We are looking at implementing the following features (please look at our issue 
 
 Please cite this work as: 
 
-> Wiedekopf J, Drenkhahn C, Rosenau L, Ulrich H, Kock-Schoppenhauer AK, Ingenerf J. TerminoDiff - Detecting Semantic Differences in HL7 FHIR CodeSystems. Stud Health Technol Inform. 2022 May 25;294:362-366. doi: [10.3233/SHTI220475](doi.org/10.3233/SHTI220475). PMID: 35612097.
+> Wiedekopf J, Drenkhahn C, Rosenau L, Ulrich H, Kock-Schoppenhauer AK, Ingenerf J. TerminoDiff - Detecting Semantic Differences in HL7 FHIR CodeSystems. Stud Health Technol Inform. 2022 May 25;294:362-366. doi: [10.3233/SHTI220475](https://doi.org/10.3233/SHTI220475). PMID: 35612097.
 
 ## Can I help?
 

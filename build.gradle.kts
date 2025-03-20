@@ -17,18 +17,21 @@ repositories {
     mavenCentral()
 }
 
-val hapiVersion = "6.8.7"
-val slf4jVersion = "2.0.17"
+val kotlinVersion: String = "2.1.10"
+val hapiVersion = "7.6.1"
 val graphStreamVersion = "2.0"
 val jGraphTVersion = "1.5.2"
 val jungraphtVersion = "1.4"
 val composeDesktopVersion = "1.7.3"
 val ktorVersion = "3.1.1"
 val jenaVersion = "5.3.0"
+val slf4jVersion = "2.0.17"
+val log4jVersion = "2.24.3"
 
 dependencies {
     testImplementation(kotlin("test"))
     implementation(compose.desktop.currentOs)
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("org.jetbrains.compose.components:components-splitpane:$composeDesktopVersion")
     implementation("org.jetbrains.compose.material:material-icons-core-desktop:$composeDesktopVersion")
@@ -36,9 +39,16 @@ dependencies {
     implementation("org.jetbrains.compose.material3:material3-desktop:$composeDesktopVersion")
     implementation("ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion")
     implementation("ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion")
-    implementation("ca.uhn.hapi.fhir:hapi-fhir-validation:$hapiVersion")
+    implementation("ca.uhn.hapi.fhir:hapi-fhir-validation:$hapiVersion") {
+        exclude(module = "ucum")
+        exclude(group="junit", module = "junit")
+    }
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
-    implementation("org.slf4j:slf4j-simple:$slf4jVersion")
+    implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
+    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
+    implementation("org.apache.logging.log4j:log4j-layout-template-json:$log4jVersion")
+    implementation("org.apache.logging.log4j:log4j-api-kotlin:1.5.0")
     implementation("org.jgrapht:jgrapht-core:$jGraphTVersion")
     implementation("org.jgrapht:jgrapht-ext:$jGraphTVersion")
     implementation("com.github.tomnelson:jungrapht-visualization:$jungraphtVersion")
@@ -54,7 +64,7 @@ dependencies {
     implementation("com.fifesoft:rsyntaxtextarea:3.6.0")
     implementation("org.apache.jena:jena-core:$jenaVersion")
     implementation("org.apache.jena:jena-arq:$jenaVersion")
-
+    implementation("ca.gosyer:kotlin-multiplatform-appdirs:1.1.1")
 }
 
 tasks.test {
@@ -113,7 +123,7 @@ compose.desktop {
                     }
                     "mac", "macos" -> macOS {
                         jvmArgs += listOf("-Dskiko.renderApi=SOFTWARE")
-                        bundleID = "de.uzl.itcr.terminodiff"
+                        bundleID = "de.uzl.imbs.skfit.terminodiff"
                         signing {
                             sign.set(false)
                         }

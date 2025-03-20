@@ -6,10 +6,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.apache.logging.log4j.kotlin.Logging
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import org.jetbrains.compose.splitpane.VerticalSplitPane
-import org.slf4j.LoggerFactory
 import terminodiff.engine.concepts.ConceptDiffItem
 import terminodiff.engine.concepts.KeyedListDiffResultKind
 import terminodiff.engine.graph.CodeSystemDiffBuilder
@@ -21,8 +21,6 @@ import terminodiff.ui.cursorForHorizontalResize
 import terminodiff.ui.panes.conceptdiff.ConceptDiffPanel
 import terminodiff.ui.panes.metadatadiff.MetadataDiffPanel
 import javax.swing.JOptionPane
-
-private val logger = LoggerFactory.getLogger("DiffPane")
 
 @OptIn(ExperimentalSplitPaneApi::class)
 @Composable
@@ -50,6 +48,7 @@ fun DiffPaneContent(
                     }
                     listsEmpty && comparisonsEmpty
                 }
+
                 else -> false
             }
         })
@@ -60,8 +59,8 @@ fun DiffPaneContent(
             /* message = */ localizedStrings.resourcesIdenticalMessage,
             /* title = */ localizedStrings.resourcesIdentical,
             /* optionType = */ JOptionPane.DEFAULT_OPTION,
-            /* messageType = */ JOptionPane.INFORMATION_MESSAGE)
-        @Suppress("UNUSED_VALUE")
+            /* messageType = */ JOptionPane.INFORMATION_MESSAGE
+        )
         showIdenticalDialog = false
     }
 
@@ -75,9 +74,11 @@ fun DiffPaneContent(
     ) {
         VerticalSplitPane(splitPaneState = splitPaneState) {
             first(100.dp) {
-                ConceptDiffPanel(diffDataContainer = diffDataContainer,
+                ConceptDiffPanel(
+                    diffDataContainer = diffDataContainer,
                     localizedStrings = strings,
-                    useDarkTheme = useDarkTheme) { focusCode ->
+                    useDarkTheme = useDarkTheme
+                ) { focusCode ->
                     diffDataContainer.codeSystemDiff?.let { diff ->
                         if (neighborhoodDisplay?.focusCode == focusCode) {
                             neighborhoodDisplay!!.changeLayers(1)
@@ -99,9 +100,11 @@ fun DiffPaneContent(
                     Box(Modifier.height(3.dp).fillMaxWidth().background(MaterialTheme.colorScheme.primary))
                 }
                 handle {
-                    Box(Modifier.markAsHandle().cursorForHorizontalResize()
-                        .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)).height(9.dp)
-                        .fillMaxWidth())
+                    Box(
+                        Modifier.markAsHandle().cursorForHorizontalResize()
+                            .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)).height(9.dp)
+                            .fillMaxWidth()
+                    )
                 }
             }
         }
@@ -118,7 +121,8 @@ fun showNeighborhoodJFrame(
         /* focusCode = */ neighborhoodDisplay.focusCode,
         /* isDarkTheme = */ useDarkTheme,
         /* localizedStrings = */ localizedStrings,
-        /* frameTitle = */ localizedStrings.graph).apply {
+        /* frameTitle = */ localizedStrings.graph
+    ).apply {
         addClickListener { delta ->
             val newValue = neighborhoodDisplay.changeLayers(delta)
             this.setGraph(neighborhoodDisplay.getNeighborhoodGraph())
@@ -132,6 +136,8 @@ data class NeighborhoodDisplay(
     val codeSystemDiff: CodeSystemDiffBuilder,
 ) {
     private var layers by mutableStateOf(1)
+
+    companion object : Logging
 
     fun getNeighborhoodGraph() = codeSystemDiff.combinedGraph!!.getSubgraph(focusCode, layers).also {
         logger.info("neighborhood of $focusCode and $layers layers: ${it.vertexSet().size} vertices and ${it.edgeSet().size} edges")

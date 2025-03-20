@@ -18,9 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.skia.impl.Stats.enabled
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.kotlin.Logging
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.terminodiff.engine.resources.InputResource
 import terminodiff.terminodiff.ui.util.TerminodiffDialog
@@ -31,7 +29,7 @@ import terminodiff.ui.util.ColumnSpec
 import terminodiff.ui.util.LazyTable
 import terminodiff.ui.util.SelectableText
 
-private val logger: Logger = LoggerFactory.getLogger("VReadDialog")
+object VRead: Logging
 
 @Composable
 fun VReadDialog(
@@ -52,8 +50,8 @@ fun VReadDialog(
         val historyUrl = buildHistoryUrl(resource)
         val bundle = retrieveBundleOfDownloadableResources(ktorClient, historyUrl, fhirContext)
         bundle?.let {
-            logger.info("Retrieved bundle with ${bundle.size} versions from $historyUrl")
-        } ?: logger.info("Error retrieving bundle from $historyUrl")
+            VRead.logger.info("Retrieved bundle with ${bundle.size} versions from $historyUrl")
+        } ?: VRead.logger.info("Error retrieving bundle from $historyUrl")
         value = bundle?.sortedByDescending { it.metaVersion }
     }
 

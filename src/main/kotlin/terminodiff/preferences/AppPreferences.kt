@@ -1,7 +1,6 @@
 package terminodiff.preferences
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.kotlin.Logging
 import terminodiff.TerminoDiffApp
 import terminodiff.i18n.SupportedLocale
 import java.util.prefs.Preferences
@@ -9,13 +8,10 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-private val logger: Logger = LoggerFactory.getLogger(AppPreferences::class.java)
-
 /**
  * https://stackoverflow.com/q/66462586
  */
-object AppPreferences {
-    //val systemPref by lazy { Preferences.systemNodeForPackage(TerminoDiffApp::class.java) }
+object AppPreferences: Logging {
     private val userPref: Preferences by lazy {
         Preferences.userNodeForPackage(TerminoDiffApp::class.java).also { pref ->
             logger.debug("loaded preferences from ${pref.absolutePath()}")
@@ -38,7 +34,8 @@ class PreferenceDelegate<T : Any>(
     val type: KClass<T>
 ) : ReadWriteProperty<Any, T> {
 
-    @Suppress("UNCHECKED_CAST")
+    companion object: Logging
+
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
         with(preferences) {
             when (type) {

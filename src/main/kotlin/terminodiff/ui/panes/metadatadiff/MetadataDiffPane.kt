@@ -14,8 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.kotlin.Logging
 import terminodiff.engine.resources.DiffDataContainer
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.terminodiff.engine.metadata.MetadataComparison
@@ -26,7 +25,7 @@ import terminodiff.ui.theme.DiffColors
 import terminodiff.ui.theme.getDiffColors
 import terminodiff.ui.util.LazyTable
 
-private val logger: Logger = LoggerFactory.getLogger("MetadataDiffPanel")
+object MetadataDiffPane : Logging
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -54,18 +53,29 @@ fun MetadataDiffPanel(
     ) {
         Column(Modifier.padding(8.dp).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Text(text = localizedStrings.metadataDiff,
-                style = MaterialTheme.typography.headlineSmall)
+            Text(
+                text = localizedStrings.metadataDiff,
+                style = MaterialTheme.typography.headlineSmall
+            )
 
-            MetadataDiffTable(lazyListState = listState,
+            MetadataDiffTable(
+                lazyListState = listState,
                 diffDataContainer = diffDataContainer,
                 localizedStrings = localizedStrings,
-                diffColors = diffColors) { comparison ->
+                diffColors = diffColors
+            ) { comparison ->
                 when (val listComparison = comparison as? MetadataListComparison<*, *>) {
                     null -> return@MetadataDiffTable
                     else -> {
-                        logger.info("clicked details button for ${listComparison.diffItem.label.invoke(localizedStrings)}")
-                        listDetailsDialogData = listComparison}
+                        MetadataDiffPane.logger.info(
+                            "clicked details button for ${
+                                listComparison.diffItem.label.invoke(
+                                    localizedStrings
+                                )
+                            }"
+                        )
+                        listDetailsDialogData = listComparison
+                    }
                 }
             }
         }
@@ -81,12 +91,16 @@ fun MetadataDiffTable(
     onShowDetailsClick: (MetadataComparison) -> Unit,
 ) =
     diffDataContainer.codeSystemDiff?.metadataDifferences?.comparisons?.let { comparisons ->
-        val sortedData = comparisons.sortedWith(compareBy<MetadataComparison> { it.result.ordinal }.thenBy { it.diffItem.label.invoke(localizedStrings) })
+        val sortedData = comparisons.sortedWith(compareBy<MetadataComparison> { it.result.ordinal }.thenBy {
+            it.diffItem.label.invoke(localizedStrings)
+        })
         LazyTable(
-            columnSpecs = metadataColumnSpecs(localizedStrings,
+            columnSpecs = metadataColumnSpecs(
+                localizedStrings,
                 diffColors,
                 diffDataContainer,
-                onShowDetailsClick),
+                onShowDetailsClick
+            ),
             backgroundColor = colorScheme.surfaceVariant,
             lazyListState = lazyListState,
             zebraStripingColor = colorScheme.secondaryContainer,

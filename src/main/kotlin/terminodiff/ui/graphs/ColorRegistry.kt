@@ -1,15 +1,12 @@
 package terminodiff.ui.graphs
 
 import net.mahdilamb.colormap.Colormaps
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.kotlin.Logging
 import terminodiff.terminodiff.engine.graph.GraphSide
 import java.awt.Color
 
-private val logger: Logger = LoggerFactory.getLogger(ColorRegistry::class.java)
-
 class ColorRegistry {
-    companion object {
+    companion object: Logging {
 
         private val tab10 = Colormaps.Qualitative.Tab10()
         private val accent = Colormaps.Qualitative.Accent()

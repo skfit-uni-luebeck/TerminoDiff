@@ -3,30 +3,39 @@ package terminodiff
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import ca.gosyer.appdirs.AppDirs
 import ca.uhn.fhir.context.FhirContext
 import com.formdev.flatlaf.FlatDarkLaf
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.core.config.Configurator
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory
+import org.apache.logging.log4j.kotlin.Logging
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import terminodiff.engine.resources.DiffDataContainer
 import terminodiff.i18n.SupportedLocale
 import terminodiff.i18n.getStrings
 import terminodiff.preferences.AppPreferences
 import terminodiff.terminodiff.ui.TerminodiffAppContent
 import java.io.File
+import java.nio.file.Path
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.imageio.ImageIO
 import javax.swing.UIManager
-
-private val logger: Logger = LoggerFactory.getLogger(TerminoDiffApp::class.java)
+import kotlin.io.path.absolutePathString
 
 /**
  * just for creating the log
  */
-class TerminoDiffApp
+object TerminoDiffApp : Logging
+
+val appDirs by lazy {
+    AppDirs("TerminoDiff", "de.uzl.imbs.skfit")
+}
 
 val resourcesDir = System.getProperty("compose.application.resources.dir")?.let { path ->
     // this only works in the native distribution, (this includes when using `runDistributable` in Gradle/IntelliJ)
@@ -35,10 +44,30 @@ val resourcesDir = System.getProperty("compose.application.resources.dir")?.let 
 }
 
 fun main() = application {
+    configureFileLogging()
     AppWindow(this)
 }
 
-@OptIn(ExperimentalSplitPaneApi::class, ExperimentalComposeUiApi::class)
+fun configureFileLogging() {
+    val configBuilder = ConfigurationBuilderFactory.newConfigurationBuilder()
+    val currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+    val logFileName = appDirs.getUserLogDir().let {
+        Path.of(it)
+    }.resolve("terminodiff-$currentDateTime.log")
+    val config = configBuilder.add(
+        configBuilder.newAppender("StdOut", "CONSOLE").add(configBuilder.newLayout("JsonTemplateLayout"))
+    ).add(
+        configBuilder.newAppender(
+            "File", "File"
+        ).addAttribute("fileName", logFileName).add(configBuilder.newLayout("JsonTemplateLayout"))
+    ).add(
+        configBuilder.newRootLogger(Level.INFO).add(configBuilder.newAppenderRef("StdOut"))
+            .add(configBuilder.newAppenderRef("File"))
+    ).build(false)
+    Configurator.reconfigure(config)
+    LogManager.getRootLogger().info("Writing log to: ${logFileName.absolutePathString()}")
+}
+
 @Composable
 fun AppWindow(
     applicationScope: ApplicationScope
@@ -78,7 +107,7 @@ fun LocalizedContent() {
                 SupportedLocale.EN -> SupportedLocale.DE
             }
             AppPreferences.language = locale.name
-            logger.info("changed locale to ${locale.name}")
+            TerminoDiffApp.logger.info("changed locale to ${locale.name}")
             diffDataContainer.localizedStrings = getStrings(locale)
         },
         onChangeDarkTheme = {

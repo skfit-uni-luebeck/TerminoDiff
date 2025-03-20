@@ -1,17 +1,13 @@
 package terminodiff.engine.graph
 
+import org.apache.logging.log4j.kotlin.Logging
 import org.hl7.fhir.r4.model.*
 import org.jgrapht.Graph
 import org.jgrapht.graph.builder.GraphTypeBuilder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.ui.graphs.ColorRegistry
 import terminodiff.ui.graphs.Registry
-import java.awt.Color
 import java.util.*
-
-private val logger: Logger = LoggerFactory.getLogger(CodeSystemGraphBuilder::class.java)
 
 typealias PropertyMap = Map<String, CodeSystem.PropertyType>
 
@@ -19,6 +15,8 @@ class CodeSystemGraphBuilder(
     val codeSystem: CodeSystem,
     private val localizedStrings: LocalizedStrings,
 ) {
+
+    companion object: Logging
 
     // store more detailed node data in a red-black tree, which can retrieve nodes in O(log n)
     val nodeTree = TreeMap<String, FhirConceptDetails>()

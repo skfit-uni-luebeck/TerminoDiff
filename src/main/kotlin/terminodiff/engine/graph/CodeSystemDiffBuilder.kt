@@ -1,10 +1,9 @@
 package terminodiff.engine.graph
 
 import androidx.compose.runtime.*
+import org.apache.logging.log4j.kotlin.Logging
 import org.jgrapht.Graph
 import org.jgrapht.graph.builder.GraphTypeBuilder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import terminodiff.engine.concepts.ConceptDiff
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.terminodiff.engine.graph.*
@@ -14,13 +13,13 @@ import terminodiff.ui.graphs.ColorRegistry
 import java.awt.Color
 import java.util.*
 
-private val logger: Logger = LoggerFactory.getLogger("CodeSystemDiffBuilder")
-
 class CodeSystemDiffBuilder(
     private val leftBuilder: CodeSystemGraphBuilder,
     private val rightBuilder: CodeSystemGraphBuilder,
     private val localizedStrings: LocalizedStrings,
 ) {
+
+    companion object : Logging
 
     val metadataDifferences by derivedStateOf {
         MetadataDiff(leftBuilder.codeSystem, rightBuilder.codeSystem, localizedStrings).also { metadataDiff ->
@@ -53,22 +52,29 @@ class CodeSystemDiffBuilder(
                 return@mapNotNull null
             }
             inBothConcepts.add(code)
-            code to ConceptDiff.compareConcept(leftConcept = leftConcept,
+            code to ConceptDiff.compareConcept(
+                leftConcept = leftConcept,
                 rightConcept = rightConcept,
                 leftProperties = leftBuilder.simplePropertyCodeTypes,
-                rightProperties = rightBuilder.simplePropertyCodeTypes)
+                rightProperties = rightBuilder.simplePropertyCodeTypes
+            )
         }.forEach { (code, conceptDiff) ->
             conceptDifferences[code] = conceptDiff
         }
         onlyInRightConcepts.addAll(rightBuilder.nodeTree.keys.filter { it !in conceptDifferences.keys })
         buildDiffGraph()
-        logger.info("Built diff graph, ${differenceGraph.vertexSet().count()} vertices, ${
-            differenceGraph.edgeSet().count()
-        } edges")
+        logger.info(
+            "Built diff graph, ${differenceGraph.vertexSet().count()} vertices, ${
+                differenceGraph.edgeSet().count()
+            } edges"
+        )
         logger.info("only in left graph: ${onlyInLeftConcepts.size} concepts")
         logger.info("only in right graph: ${onlyInRightConcepts.size} concepts")
-        logger.debug("Diff edges: (${differenceGraph.edgeSet().size}): {}",
-            differenceGraph.edgeSet().joinToString("; ", limit = 5))
+        logger.debug {
+            "Diff edges: (${differenceGraph.edgeSet().size}): ${
+                differenceGraph.edgeSet().joinToString("; ", limit = 5)
+            }"
+        }
         combinedGraph = buildCombinedGraph()
         return this
     }
@@ -76,7 +82,7 @@ class CodeSystemDiffBuilder(
     private fun edgesOnlyInX(
         graphBuilder: CodeSystemGraphBuilder, otherGraphBuilder: CodeSystemGraphBuilder, kind: GraphSide,
     ) = graphBuilder.graph.edgeSet().minus(otherGraphBuilder.graph.edgeSet()).also {
-        logger.debug("only in $kind: (${it.size}): {}", it.joinToString(separator = "; ", limit = 5))
+        logger.debug { "only in $kind: (${it.size}): ${it.joinToString(separator = "; ", limit = 5)}" }
     }.mapNotNull { edge ->
         val toConcept = graphBuilder.nodeTree[edge.to]
         val fromConcept = graphBuilder.nodeTree[edge.from]
@@ -85,16 +91,20 @@ class CodeSystemDiffBuilder(
                 logger.warn("the target code '${edge.to}' for property '${edge.propertyCode}' (from ${edge.from}) was not found in $kind")
                 return@mapNotNull null
             }
+
             fromConcept == null -> {
                 logger.warn("the origin code '${edge.from}' for property '${edge.propertyCode}' (to ${edge.to}) was not found in $kind")
                 return@mapNotNull null
             }
-            else -> DiffEdge(fromCode = edge.from,
+
+            else -> DiffEdge(
+                fromCode = edge.from,
                 fromDisplay = fromConcept.display,
                 toCode = edge.to,
                 toDisplay = toConcept.display,
                 propertyCode = edge.propertyCode,
-                inWhich = kind)
+                inWhich = kind
+            )
         }
     }
 
@@ -139,26 +149,34 @@ class CodeSystemDiffBuilder(
             val displayRight = rightBuilder.nodeTree[code]?.display
             CombinedVertex(code = code, displayLeft = displayLeft, displayRight = displayRight, GraphSide.BOTH)
         }.plus(onlyInLeftConcepts.map { leftCode ->
-            CombinedVertex(code = leftCode,
+            CombinedVertex(
+                code = leftCode,
                 displayLeft = leftBuilder.nodeTree[leftCode]?.display,
-                side = GraphSide.LEFT)
+                side = GraphSide.LEFT
+            )
         }).plus(onlyInRightConcepts.map { rightCode ->
-            CombinedVertex(code = rightCode,
+            CombinedVertex(
+                code = rightCode,
                 displayRight = rightBuilder.nodeTree[rightCode]?.display,
-                side = GraphSide.RIGHT)
+                side = GraphSide.RIGHT
+            )
         })
         combinedGraphBuilder.graph.addAllVertices(nodes)
         edgesInBoth().plus(
             differenceGraph.edgeSet().map { diffEdge ->
-                CombinedEdge(diffEdge.fromCode,
+                CombinedEdge(
+                    diffEdge.fromCode,
                     diffEdge.toCode,
                     property = diffEdge.propertyCode,
-                    side = diffEdge.inWhich)
+                    side = diffEdge.inWhich
+                )
             }).forEach(combinedGraphBuilder.graph::addCombinedEdge)
 
-        logger.info("Combined graph: ${
-            combinedGraphBuilder.graph.vertexSet().count()
-        } vertices, ${combinedGraphBuilder.graph.edgeSet().count()} edges")
+        logger.info(
+            "Combined graph: ${
+                combinedGraphBuilder.graph.vertexSet().count()
+            } vertices, ${combinedGraphBuilder.graph.edgeSet().count()} edges"
+        )
         combinedGraphBuilder.populateAffected()
         return combinedGraphBuilder
     }

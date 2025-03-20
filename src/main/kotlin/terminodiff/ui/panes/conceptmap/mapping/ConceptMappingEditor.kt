@@ -27,9 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.apache.logging.log4j.kotlin.KotlinLogger
+import org.apache.logging.log4j.kotlin.Logging
 import org.hl7.fhir.r4.model.Enumerations.ConceptMapEquivalence
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import terminodiff.engine.resources.DiffDataContainer
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.java.ui.NeighborhoodJFrame
@@ -48,7 +48,7 @@ import java.util.*
 import javax.swing.JOptionPane
 import kotlin.collections.contains
 
-private val logger: Logger = LoggerFactory.getLogger("ConceptMappingEditor")
+object ConceptMappingEditor : Logging
 
 @Composable
 fun ConceptMappingEditorContent(
@@ -61,7 +61,14 @@ fun ConceptMappingEditorContent(
     val lazyListState = rememberLazyListState()
     val dividerColor = colorScheme.primary
     val columnSpecs by derivedStateOf {
-        getColumnSpecs(diffDataContainer, localizedStrings, useDarkTheme, dividerColor, allConceptCodes)
+        getColumnSpecs(
+            diffDataContainer = diffDataContainer,
+            localizedStrings = localizedStrings,
+            useDarkTheme = useDarkTheme,
+            dividerColor = dividerColor,
+            allConceptCodes = allConceptCodes,
+            logger = ConceptMappingEditor.logger
+        )
     }
 
     val columnHeight: Dp by derivedStateOf {
@@ -69,7 +76,8 @@ fun ConceptMappingEditorContent(
     }
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         MappingStatus(conceptMapState, localizedStrings)
-        LazyTable(columnSpecs = columnSpecs,
+        LazyTable(
+            columnSpecs = columnSpecs,
             cellHeight = columnHeight,
             tableData = conceptMapState.conceptMap!!.group.elements,
             localizedStrings = localizedStrings,
@@ -90,9 +98,11 @@ fun MappingStatus(conceptMapState: ConceptMapState, localizedStrings: LocalizedS
     val validCount by derivedStateOf {
         elements.sumOf { it.targets.count { t -> t.state == ConceptMapTarget.MappingState.VALID } }
     }
-    Row(Modifier.fillMaxWidth(),
+    Row(
+        Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically) {
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(buildAnnotatedString {
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                 append(localizedStrings.mappableCount_(mappableCount))
@@ -125,7 +135,8 @@ private fun askAcceptAll(conceptMapState: ConceptMapState, localizedStrings: Loc
         /* messageType = */ JOptionPane.QUESTION_MESSAGE,
         /* icon = */ null,
         /* options = */ options,
-        /* initialValue = */ options[0])) {
+        /* initialValue = */ options[0]
+    )) {
         options.indexOf(localizedStrings.yes) -> {
             conceptMapState.acceptAll()
         }
@@ -138,21 +149,26 @@ private fun getColumnSpecs(
     useDarkTheme: Boolean,
     dividerColor: Color,
     allConceptCodes: SortedMap<String, AnnotatedString>,
-): List<ColumnSpec<ConceptMapElement>> = listOf(codeColumnSpec(localizedStrings),
+    logger: KotlinLogger,
+): List<ColumnSpec<ConceptMapElement>> = listOf(
+    codeColumnSpec(localizedStrings),
     displayColumnSpec(localizedStrings),
-    actionsColumnSpec(diffDataContainer, localizedStrings, useDarkTheme),
+    actionsColumnSpec(diffDataContainer, localizedStrings, useDarkTheme, logger),
     equivalenceColumnSpec(localizedStrings, dividerColor),
-    targetColumnSpec(localizedStrings, dividerColor, allConceptCodes),
+    targetColumnSpec(localizedStrings, dividerColor, allConceptCodes, logger),
     commentsColumnSpec(localizedStrings, dividerColor),
-    targetStatusColumnSpec(localizedStrings, dividerColor))
+    targetStatusColumnSpec(localizedStrings, dividerColor)
+)
 
 private fun codeColumnSpec(localizedStrings: LocalizedStrings) =
-    ColumnSpec.StringSearchableColumnSpec<ConceptMapElement>(title = localizedStrings.code,
+    ColumnSpec.StringSearchableColumnSpec<ConceptMapElement>(
+        title = localizedStrings.code,
         weight = 0.1f,
         instanceGetter = { this.code.value })
 
 private fun displayColumnSpec(localizedStrings: LocalizedStrings) =
-    ColumnSpec.StringSearchableColumnSpec<ConceptMapElement>(title = localizedStrings.display,
+    ColumnSpec.StringSearchableColumnSpec<ConceptMapElement>(
+        title = localizedStrings.display,
         weight = 0.2f,
         instanceGetter = { this.display.value })
 
@@ -161,11 +177,14 @@ private fun actionsColumnSpec(
     diffDataContainer: DiffDataContainer,
     localizedStrings: LocalizedStrings,
     useDarkTheme: Boolean,
+    logger: KotlinLogger,
 ) = ColumnSpec<ConceptMapElement>(title = localizedStrings.actions, weight = 0.08f) { element ->
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-        Row(Modifier.fillMaxSize(),
+        Row(
+            Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)) {
+            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
+        ) {
             IconButton(onClick = {
                 showElementNeighborhood(element, useDarkTheme, localizedStrings)
             }, modifier = Modifier.size(24.dp)) {
@@ -175,7 +194,7 @@ private fun actionsColumnSpec(
                 element.targets.add(ConceptMapTarget(diffDataContainer).apply {
                     isAutomaticallySet = false
                 })
-                logger.debug("Added target for {}", element)
+                logger.debug { "Added target for $element" }
             }, modifier = Modifier.size(24.dp)) {
                 Icon(Icons.Default.AddCircle, localizedStrings.addTarget)
             }
@@ -187,15 +206,19 @@ private fun equivalenceColumnSpec(
     localizedStrings: LocalizedStrings,
     dividerColor: Color,
 ): ColumnSpec<ConceptMapElement> {
-    return columnSpecForMultiRow(title = localizedStrings.equivalence,
+    return columnSpecForMultiRow(
+        title = localizedStrings.equivalence,
         weight = 0.2f,
         elementListGetter = { it.targets },
-        dividerColor = dividerColor) { _, target ->
-        Dropdown(elements = ConceptMapEquivalenceDisplay.entries,
+        dividerColor = dividerColor
+    ) { _, target ->
+        Dropdown(
+            elements = ConceptMapEquivalenceDisplay.entries,
             elementDisplay = { it.displayIndent() },
             textFieldDisplay = { it.display },
             selectedElement = ConceptMapEquivalenceDisplay.fromEquivalence(target.equivalence.value),
-            dropdownColor = colorScheme.tertiaryContainer) { newValue ->
+            dropdownColor = colorScheme.tertiaryContainer
+        ) { newValue ->
             target.equivalence.value = newValue.equivalence
             target.isAutomaticallySet = false
         }
@@ -207,22 +230,28 @@ private fun targetColumnSpec(
     localizedStrings: LocalizedStrings,
     dividerColor: Color,
     allConceptCodes: SortedMap<String, AnnotatedString>,
-) = columnSpecForMultiRow<ConceptMapElement, ConceptMapTarget>(localizedStrings.target,
+    logger: KotlinLogger,
+) = columnSpecForMultiRow<ConceptMapElement, ConceptMapTarget>(
+    localizedStrings.target,
     weight = 0.2f,
     elementListGetter = { it.targets },
-    dividerColor = dividerColor) { td, target ->
-    Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+    dividerColor = dividerColor
+) { td, target ->
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically) {
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
             IconButton(onClick = {
                 td.targets.remove(target)
-                logger.debug("Removed target {} for {}", target, td)
+                logger.debug { "Removed target $target for $td" }
             }, modifier = Modifier.size(24.dp)) {
                 Icon(Icons.Default.RemoveCircle, localizedStrings.addTarget)
             }
         }
-        AutocompleteEditText(autocompleteSuggestions = allConceptCodes,
+        AutocompleteEditText(
+            autocompleteSuggestions = allConceptCodes,
             inputValue = target.code.value,
             localizedStrings = localizedStrings,
             backgroundColor = colorScheme.tertiaryContainer,
@@ -239,32 +268,42 @@ private fun targetColumnSpec(
 }
 
 private fun commentsColumnSpec(localizedStrings: LocalizedStrings, dividerColor: Color) =
-    columnSpecForMultiRow<ConceptMapElement, ConceptMapTarget>(title = localizedStrings.comments,
+    columnSpecForMultiRow<ConceptMapElement, ConceptMapTarget>(
+        title = localizedStrings.comments,
         weight = 0.2f,
         elementListGetter = { it.targets },
-        dividerColor = dividerColor) { _, target ->
-        EditText(data = target,
+        dividerColor = dividerColor
+    ) { _, target ->
+        EditText(
+            data = target,
             spec = EditTextSpec(title = null, valueState = { comment }, validation = null),
             backgroundColor = colorScheme.tertiaryContainer,
-            localizedStrings = localizedStrings)
+            localizedStrings = localizedStrings
+        )
     }
 
 private fun targetStatusColumnSpec(localizedStrings: LocalizedStrings, dividerColor: Color) =
-    columnSpecForMultiRow<ConceptMapElement, ConceptMapTarget>(title = localizedStrings.status,
+    columnSpecForMultiRow<ConceptMapElement, ConceptMapTarget>(
+        title = localizedStrings.status,
         weight = 0.08f,
         elementListGetter = { it.targets },
-        dividerColor = dividerColor) { _, target ->
+        dividerColor = dividerColor
+    ) { _, target ->
         val description = target.state.description.invoke(localizedStrings)
-        Column(Modifier.height(56.dp).fillMaxWidth(),
+        Column(
+            Modifier.height(56.dp).fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             MouseOverPopup(text = description) {
                 val icon: @Composable (Color?) -> Unit =
                     { Icon(target.state.image, description, tint = it ?: LocalContentColor.current) }
                 if (target.state == ConceptMapTarget.MappingState.AUTO) {
-                    FloatingActionButton(modifier = Modifier.size(48.dp),
+                    FloatingActionButton(
+                        modifier = Modifier.size(48.dp),
                         onClick = { target.isAutomaticallySet = false },
-                        containerColor = colorScheme.tertiary) {
+                        containerColor = colorScheme.tertiary
+                    ) {
                         icon(colorScheme.onTertiary)
                     }
                 } else {
@@ -286,7 +325,8 @@ private fun showElementNeighborhood(
         /* focusCode = */ neighborhoodDisplay.focusCode,
         /* isDarkTheme = */ useDarkTheme,
         /* localizedStrings = */ localizedStrings,
-        /* frameTitle = */ localizedStrings.graphFor_.invoke(focusElement.code.value)).apply {
+        /* frameTitle = */ localizedStrings.graphFor_.invoke(focusElement.code.value)
+    ).apply {
         addClickListener { delta ->
             val newValue = neighborhoodDisplay.changeLayers(delta)
             this.setGraph(neighborhoodDisplay.getNeighborhoodGraph())
@@ -300,12 +340,16 @@ enum class ConceptMapEquivalenceDisplay(
     val display: String,
     val equivalence: ConceptMapEquivalence,
 ) {
-    RELATEDTO(0, "Related To", ConceptMapEquivalence.RELATEDTO), EQUIVALENT(1,
+    RELATEDTO(0, "Related To", ConceptMapEquivalence.RELATEDTO), EQUIVALENT(
+        1,
         "Equivalent",
-        ConceptMapEquivalence.EQUIVALENT),
-    WIDER(1, "Wider", ConceptMapEquivalence.WIDER), NARROWER(1, "Narrower", ConceptMapEquivalence.NARROWER), DISJOINT(0,
+        ConceptMapEquivalence.EQUIVALENT
+    ),
+    WIDER(1, "Wider", ConceptMapEquivalence.WIDER), NARROWER(1, "Narrower", ConceptMapEquivalence.NARROWER), DISJOINT(
+        0,
         "Disjoint",
-        ConceptMapEquivalence.DISJOINT);
+        ConceptMapEquivalence.DISJOINT
+    );
 
     fun displayIndent(): String = "${" ".repeat(this.level * 4)}${this.display}"
 

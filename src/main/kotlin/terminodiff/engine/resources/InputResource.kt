@@ -5,13 +5,10 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import org.apache.http.HttpException
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.kotlin.Logging
 import terminodiff.ui.panes.loaddata.panes.fromserver.DownloadableCodeSystem
 import java.io.File
 import kotlin.io.path.bufferedWriter
-
-private val logger: Logger = LoggerFactory.getLogger("InputResource")
 
 data class InputResource(
     val kind: Kind,
@@ -20,6 +17,9 @@ data class InputResource(
     val sourceFhirServerUrl: String? = null,
     val downloadableCodeSystem: DownloadableCodeSystem? = null
 ) {
+
+    companion object: Logging
+
     enum class Kind {
         FILE,
         FHIR_SERVER,

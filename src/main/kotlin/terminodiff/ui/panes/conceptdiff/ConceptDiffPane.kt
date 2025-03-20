@@ -12,8 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.kotlin.Logging
 import terminodiff.engine.concepts.ConceptDiff
 import terminodiff.engine.concepts.ConceptDiffItem
 import terminodiff.engine.concepts.KeyedListDiffResultKind
@@ -31,11 +30,11 @@ import terminodiff.ui.util.ToggleableChipGroup
 import terminodiff.ui.util.ToggleableChipSpec
 import java.util.*
 
-private val logger: Logger = LoggerFactory.getLogger("conceptdiffpanel")
-
 private enum class DetailsDialogKind {
     PROPERTY_DESIGNATION, DISPLAY, DEFINITION
 }
+
+object ConceptDiffPane : Logging
 
 @Composable
 fun ConceptDiffPanel(
@@ -50,12 +49,14 @@ fun ConceptDiffPanel(
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
     val coroutineScope = rememberCoroutineScope()
     val filterSpecs by derivedStateOf {
-        listOf(ToggleableChipSpec(ToggleableChipSpec.showAll, localizedStrings.showAll),
+        listOf(
+            ToggleableChipSpec(ToggleableChipSpec.showAll, localizedStrings.showAll),
             ToggleableChipSpec(ToggleableChipSpec.showIdentical, localizedStrings.showIdentical),
             ToggleableChipSpec(ToggleableChipSpec.showDifferent, localizedStrings.showDifferent),
             ToggleableChipSpec(ToggleableChipSpec.onlyConceptDifferences, localizedStrings.onlyConceptDifferences),
             ToggleableChipSpec(ToggleableChipSpec.onlyInLeft, localizedStrings.onlyInLeft),
-            ToggleableChipSpec(ToggleableChipSpec.onlyInRight, localizedStrings.onlyInRight))
+            ToggleableChipSpec(ToggleableChipSpec.onlyInRight, localizedStrings.onlyInRight)
+        )
     }
     val counts by derivedStateOf {
         filterSpecs.associate { it.name to filterDiffItems(diffDataContainer, it.name).shownCodes.size }
@@ -66,20 +67,28 @@ fun ConceptDiffPanel(
     dialogData?.let { (data, kind) ->
         val onClose: () -> Unit = { dialogData = null }
         when (kind) {
-            DetailsDialogKind.PROPERTY_DESIGNATION -> PropertyDesignationDialog(data,
+            DetailsDialogKind.PROPERTY_DESIGNATION -> PropertyDesignationDialog(
+                data,
                 localizedStrings,
                 useDarkTheme,
-                onClose)
-            DetailsDialogKind.DISPLAY -> DisplayDetailsDialog(data = data,
+                onClose
+            )
+
+            DetailsDialogKind.DISPLAY -> DisplayDetailsDialog(
+                data = data,
                 localizedStrings = localizedStrings,
                 label = localizedStrings.display,
                 useDarkTheme = useDarkTheme,
-                onClose = onClose) { it.display }
-            DetailsDialogKind.DEFINITION -> DisplayDetailsDialog(data = data,
+                onClose = onClose
+            ) { it.display }
+
+            DetailsDialogKind.DEFINITION -> DisplayDetailsDialog(
+                data = data,
                 localizedStrings = localizedStrings,
                 label = localizedStrings.definition,
                 useDarkTheme = useDarkTheme,
-                onClose = onClose) { it.definition }
+                onClose = onClose
+            ) { it.definition }
         }
     }
 
@@ -93,7 +102,7 @@ fun ConceptDiffPanel(
             Text(localizedStrings.conceptDiff, style = MaterialTheme.typography.headlineSmall)
             Row {
                 FilterGroup(filterSpecs = filterSpecs, filterCounts = counts, activeFilter = activeFilter) {
-                    logger.info("changed filter to $it")
+                    ConceptDiffPane.logger.info("changed filter to $it")
                     activeFilter = it
                     coroutineScope.launch {
                         // scroll has to be invoked from a coroutine
@@ -102,7 +111,8 @@ fun ConceptDiffPanel(
                 }
             }
 
-            DiffDataTable(diffDataContainer = diffDataContainer,
+            DiffDataTable(
+                diffDataContainer = diffDataContainer,
                 tableData = chipFilteredTableData,
                 localizedStrings = localizedStrings,
                 diffColors = diffColors,
@@ -116,7 +126,8 @@ fun ConceptDiffPanel(
                 onShowDefinitionDetailsDialog = {
                     dialogData = it to DetailsDialogKind.DEFINITION
                 },
-                onShowGraph = onShowGraph)
+                onShowGraph = onShowGraph
+            )
         }
     }
 }
@@ -146,12 +157,14 @@ fun filterDiffItems(diffDataContainer: DiffDataContainer, activeFilter: String):
         else -> onlyInLeftConcepts.plus(onlyInRightConcepts).plus(conceptDiff.keys) // show all
     }.toSortedSet().toList()
 
-    return TableData(onlyInLeftConcepts,
+    return TableData(
+        onlyInLeftConcepts,
         onlyInRightConcepts,
         shownCodes,
         conceptDiff,
         leftGraphBuilder,
-        rightGraphBuilder)
+        rightGraphBuilder
+    )
 
 }
 
@@ -170,10 +183,12 @@ fun FilterGroup(
     filterCounts: Map<String, Int>,
     activeFilter: String,
     onFilterChange: (String) -> Unit,
-) = ToggleableChipGroup(specs = filterSpecs,
+) = ToggleableChipGroup(
+    specs = filterSpecs,
     selectedItem = activeFilter,
     onSelectionChanged = onFilterChange,
-    filterCounts = filterCounts)
+    filterCounts = filterCounts
+)
 
 @Composable
 fun DiffDataTable(
@@ -190,12 +205,14 @@ fun DiffDataTable(
     if (diffDataContainer.codeSystemDiff == null) throw IllegalStateException("the diff data container is not initialized")
 
     val columnSpecs by derivedStateOf {
-        conceptDiffColumnSpecs(localizedStrings = localizedStrings,
+        conceptDiffColumnSpecs(
+            localizedStrings = localizedStrings,
             diffColors = diffColors,
             onShowPropertyDialog = onShowPropertyDialog,
             onShowDisplayDetailsDialog = onShowDisplayDetailsDialog,
             onShowDefinitionDetailsDialog = onShowDefinitionDetailsDialog,
-            onShowGraph = onShowGraph)
+            onShowGraph = onShowGraph
+        )
     }
 
     TableScreen(
@@ -222,10 +239,12 @@ data class ConceptTableData(
                 diff!!.conceptComparison.any {
                     it.result == ConceptDiffItem.ConceptDiffResultEnum.DIFFERENT
                 } -> OverallComparison.DIFFERENT
+
                 diff.propertyComparison.any { it.result != KeyedListDiffResultKind.IDENTICAL } -> OverallComparison.DIFFERENT
                 diff.designationComparison.any { it.result != KeyedListDiffResultKind.IDENTICAL } -> OverallComparison.DIFFERENT
                 else -> OverallComparison.IDENTICAL
             }
+
             else -> when (isOnlyInLeft()) {
                 true -> OverallComparison.ONLY_LEFT
                 else -> OverallComparison.ONLY_RIGHT
@@ -250,18 +269,22 @@ fun TableScreen(
 ) {
     val containedData: List<ConceptTableData> by derivedStateOf {
         tableData.shownCodes.map { code ->
-            ConceptTableData(code = code,
+            ConceptTableData(
+                code = code,
                 leftDetails = tableData.leftGraphBuilder.nodeTree[code],
                 rightDetails = tableData.rightGraphBuilder.nodeTree[code],
-                diff = tableData.conceptDiff[code])
+                diff = tableData.conceptDiff[code]
+            )
         }.toSortedSet(compareBy<ConceptTableData> { it.overallComparison().ordinal }.thenBy { it.code }).toList()
     }
-    LazyTable(columnSpecs = columnSpecs,
+    LazyTable(
+        columnSpecs = columnSpecs,
         backgroundColor = colorScheme.surfaceVariant,
         lazyListState = lazyListState,
         zebraStripingColor = colorScheme.secondaryContainer,
         tableData = containedData,
         dataAlreadySorted = true,
         localizedStrings = localizedStrings,
-        countLabel = localizedStrings.concepts_) { it.code }
+        countLabel = localizedStrings.concepts_
+    ) { it.code }
 }
