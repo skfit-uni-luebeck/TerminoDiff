@@ -38,6 +38,7 @@ import terminodiff.ui.AppIconResource
 import terminodiff.ui.ImageRelativePath
 import terminodiff.ui.LoadListener
 import terminodiff.ui.MouseOverPopup
+import terminodiff.ui.theme.contentColor
 import terminodiff.ui.util.ColumnSpec
 import terminodiff.ui.util.LazyTable
 import java.util.*
@@ -89,10 +90,12 @@ fun FromServerScreenWrapper(
 }
 
 fun urlBuilderWithProtocol(urlString: String) = urlString.trimEnd('/').let { trimUrl ->
-    URLBuilder(when {
-        trimUrl.startsWith("http") -> trimUrl
-        else -> "https://$trimUrl" // add HTTP prefix so that URLs of the fashion http://localhost/termserver.example.local/fhir are not constructed...
-    })
+    URLBuilder(
+        when {
+            trimUrl.startsWith("http") -> trimUrl
+            else -> "https://$trimUrl" // add HTTP prefix so that URLs of the fashion http://localhost/termserver.example.local/fhir are not constructed...
+        }
+    )
 }
 
 private suspend fun listCodeSystems(
@@ -104,7 +107,7 @@ private suspend fun listCodeSystems(
         appendPathSegments("CodeSystem")
         parameters.append("_elements", "url,id,version,name,title,link,content")
     }.build()
-    logger.debug("Requesting resource bundle from $codeSystemUrl")
+    logger.debug("Requesting resource bundle from {}", codeSystemUrl)
     val list = retrieveBundleOfDownloadableResources(ktorClient, codeSystemUrl, fhirContext)
     list?.sortedBy { it.canonicalUrl }?.sortedBy { it.version }
 } catch (e: Exception) {
@@ -131,7 +134,7 @@ suspend fun retrieveBundleOfDownloadableResources(
             }
         }
         if (!bundleRx.status.isSuccess()) {
-            logger.debug("GET rx to $thisUrl not successful: ${bundleRx.status}")
+            logger.debug("GET rx to {} not successful: {}", thisUrl, bundleRx.status)
             return null
         } else {
             try {
@@ -145,7 +148,8 @@ suspend fun retrieveBundleOfDownloadableResources(
                                 null -> cs.idElement.idPart
                                 else -> entry.id
                             }
-                            DownloadableCodeSystem(physicalUrl = entry.fullUrl,
+                            DownloadableCodeSystem(
+                                physicalUrl = entry.fullUrl,
                                 canonicalUrl = cs.url,
                                 id = id, //cs.idElement.idPart,
                                 version = cs.version,
@@ -153,8 +157,10 @@ suspend fun retrieveBundleOfDownloadableResources(
                                 lastChange = cs.meta.lastUpdated,
                                 name = cs.name,
                                 title = cs.title,
-                                content = cs.content)
+                                content = cs.content
+                            )
                         }
+
                         else -> null
                     }
                 }
@@ -194,29 +200,35 @@ fun FromServerScreen(
     val lazyListState = rememberLazyListState()
     var vReadResource: InputResource? by remember { mutableStateOf(null) }
     vReadResource?.let {
-        VReadDialog(resource = it,
+        VReadDialog(
+            resource = it,
             ktorClient = ktorClient,
             fhirContext = fhirContext,
             coroutineScope = coroutineScope,
             localizedStrings = localizedStrings,
             onCloseCancel = { vReadResource = null },
             onSelectLeft = onLoadLeftFile,
-            onSelectRight = onLoadRightFile)
+            onSelectRight = onLoadRightFile
+        )
     }
-    LabeledTextField(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
+    LabeledTextField(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
         value = baseServerUrl,
         onValueChange = onChangeBaseServerUrl,
         labelText = localizedStrings.fhirTerminologyServer,
         trailingIconVector = trailingIcon,
-        trailingIconDescription = trailingIconDescription)
+        trailingIconDescription = trailingIconDescription
+    )
 
     when {
         isResourceListPending -> Row(Modifier.fillMaxWidth().weight(0.5f), horizontalArrangement = Arrangement.Center) {
             CircularProgressIndicator(Modifier.fillMaxHeight(0.75f).padding(16.dp), colorScheme.onPrimaryContainer)
         }
+
         resourceList != null -> {
             logger.debug("resource list (${resourceList.size}): ${resourceList.joinToString(limit = 3)}")
-            ListOfResources(resourceList = resourceList,
+            ListOfResources(
+                resourceList = resourceList,
                 lazyListState = lazyListState,
                 localizedStrings = localizedStrings,
                 baseServerUrl = baseServerUrl,
@@ -255,7 +267,8 @@ fun ListOfResources(
         selectedItem = selectedItem,
         baseServerUrl = baseServerUrl,
         enabled = selectedItem != null && (!isDownloadingCurrently),
-        iconImageVector = AppIconResource.loadXmlImageVector(iconPath)) {
+        iconImageVector = AppIconResource.loadXmlImageVector(iconPath)
+    ) {
         isDownloadingCurrently = true
         coroutineScope.launch {
             val downloaded = it.downloadRemoteFile(ktorClient)
@@ -265,22 +278,28 @@ fun ListOfResources(
     }
 
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-        leftRightButton(text = localizedStrings.loadLeft,
+        leftRightButton(
+            text = localizedStrings.loadLeft,
             iconPath = AppIconResource.icLoadLeftFile,
-            onLoadFile = onLoadLeftFile)
+            onLoadFile = onLoadLeftFile
+        )
 
         val vReadDisabled = (selectedItem?.metaVersion?.equals("1")) ?: true
-        LoadButton(text = localizedStrings.vread,
+        LoadButton(
+            text = localizedStrings.vread,
             selectedItem = selectedItem,
             baseServerUrl = baseServerUrl,
             iconImageVector = Icons.Default.Compare,
             enabled = !vReadDisabled,
             tooltip = localizedStrings.vreadExplanationEnabled_.invoke(selectedItem != null && !vReadDisabled),
-            onClick = onShowVReadDialog)
+            onClick = onShowVReadDialog
+        )
 
-        leftRightButton(text = localizedStrings.loadRight,
+        leftRightButton(
+            text = localizedStrings.loadRight,
             iconPath = AppIconResource.icLoadRightFile,
-            onLoadFile = onLoadRightFile)
+            onLoadFile = onLoadRightFile
+        )
     }
     LazyTable(
         columnSpecs = columnSpecs,
@@ -304,21 +323,28 @@ private fun LoadButton(
     onClick: (InputResource) -> Unit,
 ) {
     val buttonColors =
-        ButtonDefaults.filledTonalButtonColors(containerColor = colorScheme.secondary, contentColor = colorScheme.onSecondary)
+        ButtonDefaults.filledTonalButtonColors(
+            containerColor = colorScheme.secondary,
+            contentColor = colorScheme.onSecondary
+        )
     MouseOverPopup(text = tooltip ?: text) {
         FilledTonalButton(colors = buttonColors, onClick = {
             selectedItem?.let { item ->
-                val resource = InputResource(kind = InputResource.Kind.FHIR_SERVER,
+                val resource = InputResource(
+                    kind = InputResource.Kind.FHIR_SERVER,
                     resourceUrl = item.physicalUrl,
                     sourceFhirServerUrl = baseServerUrl,
-                    downloadableCodeSystem = item)
+                    downloadableCodeSystem = item
+                )
                 onClick.invoke(resource)
             }
         }, enabled = enabled) {
-            Icon(imageVector = iconImageVector,
+            Icon(
+                imageVector = iconImageVector,
                 contentDescription = text,
-                tint = buttonColors.contentColor(enabled).value)
-            Text(text, color = buttonColors.contentColor(enabled).value)
+                tint = buttonColors.contentColor(enabled)
+            )
+            Text(text, color = buttonColors.contentColor(enabled))
         }
     }
 }

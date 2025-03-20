@@ -1,5 +1,7 @@
 package terminodiff.ui.theme
 
+import androidx.compose.material3.ButtonColors
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xFF00677c)
@@ -62,3 +64,15 @@ val error = Color(0xFFba1b1b)
 val customOrange = Color(0xFFEC7404)
 val customYellow = Color(0xFFFABB00)
 val customGreen = Color(0xFF95BC0E)
+
+@Composable
+fun ButtonColors.contentColor(enabled: Boolean): Color = when (enabled) {
+    true -> this.contentColor
+    else -> this.disabledContentColor
+}
+
+@Composable
+fun ButtonColors.containerColor(enabled: Boolean): Color = when (enabled) {
+    true -> this.containerColor
+    else -> this.disabledContainerColor
+}

@@ -46,17 +46,7 @@ import terminodiff.ui.util.LazyTable
 import terminodiff.ui.util.columnSpecForMultiRow
 import java.util.*
 import javax.swing.JOptionPane
-import kotlin.collections.List
 import kotlin.collections.contains
-import kotlin.collections.count
-import kotlin.collections.indexOf
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.maxOf
-import kotlin.collections.plus
-import kotlin.collections.sumOf
-import kotlin.collections.toList
-import kotlin.collections.toTypedArray
 
 private val logger: Logger = LoggerFactory.getLogger("ConceptMappingEditor")
 
@@ -172,7 +162,7 @@ private fun actionsColumnSpec(
     localizedStrings: LocalizedStrings,
     useDarkTheme: Boolean,
 ) = ColumnSpec<ConceptMapElement>(title = localizedStrings.actions, weight = 0.08f) { element ->
-    CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         Row(Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)) {
@@ -185,7 +175,7 @@ private fun actionsColumnSpec(
                 element.targets.add(ConceptMapTarget(diffDataContainer).apply {
                     isAutomaticallySet = false
                 })
-                logger.debug("Added target for $element")
+                logger.debug("Added target for {}", element)
             }, modifier = Modifier.size(24.dp)) {
                 Icon(Icons.Default.AddCircle, localizedStrings.addTarget)
             }
@@ -201,7 +191,7 @@ private fun equivalenceColumnSpec(
         weight = 0.2f,
         elementListGetter = { it.targets },
         dividerColor = dividerColor) { _, target ->
-        Dropdown(elements = ConceptMapEquivalenceDisplay.values().toList(),
+        Dropdown(elements = ConceptMapEquivalenceDisplay.entries,
             elementDisplay = { it.displayIndent() },
             textFieldDisplay = { it.display },
             selectedElement = ConceptMapEquivalenceDisplay.fromEquivalence(target.equivalence.value),
@@ -224,10 +214,10 @@ private fun targetColumnSpec(
     Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically) {
-        CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
             IconButton(onClick = {
                 td.targets.remove(target)
-                logger.debug("Removed target $target for $td")
+                logger.debug("Removed target {} for {}", target, td)
             }, modifier = Modifier.size(24.dp)) {
                 Icon(Icons.Default.RemoveCircle, localizedStrings.addTarget)
             }

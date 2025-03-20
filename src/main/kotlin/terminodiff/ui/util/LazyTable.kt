@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Backspace
+import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -160,9 +160,9 @@ private fun <T> ResetIconButton(
     searchState: SearchState<T>,
     foregroundColor: Color,
     localizedStrings: LocalizedStrings,
-) = CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+) = CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
     IconButton(onClick = { searchState.clearAllSearch() }, enabled = searchState.isSearching) {
-        Icon(Icons.Default.Backspace,
+        Icon(Icons.AutoMirrored.Filled.Backspace,
             localizedStrings.clearSearch,
             modifier = Modifier.size(24.dp).padding(1.dp),
             tint = when (searchState.isSearching) {
@@ -244,7 +244,7 @@ fun <T> RowScope.HeaderCell(
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center)
             if (columnSpec.searchPredicate != null) {
-                CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+                CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
                     val searchMouseover = when (searchState.isFilteringFor(columnName)) {
                         true -> searchState.getSearchQueryFor(columnName)
                         else -> "\"${localizedStrings.search}\""
@@ -261,7 +261,8 @@ fun <T> RowScope.HeaderCell(
                         MouseOverPopup(text = localizedStrings.clearSearch) {
                             IconButton(modifier = Modifier.size(32.dp).padding(4.dp),
                                 onClick = { onSearchClearClick(columnName) }) {
-                                Icon(Icons.Default.Backspace,
+                                Icon(
+                                    Icons.AutoMirrored.Filled.Backspace,
                                     contentDescription = localizedStrings.clearSearch,
                                     tint = contentColor)
                             }

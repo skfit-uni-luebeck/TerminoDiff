@@ -10,10 +10,11 @@ import terminodiff.engine.concepts.ConceptDiffItem
 import terminodiff.engine.graph.CodeSystemDiffBuilder
 import terminodiff.engine.graph.CodeSystemGraphBuilder
 import terminodiff.i18n.LocalizedStrings
-import terminodiff.terminodiff.engine.conceptmap.ConceptMapState
-import terminodiff.terminodiff.engine.graph.CombinedGraphBuilder
 import terminodiff.terminodiff.engine.resources.InputResource
+import java.nio.file.Files
 import java.util.*
+import kotlin.io.path.absolute
+import kotlin.io.path.writer
 
 private val logger: Logger = LoggerFactory.getILoggerFactory().getLogger("DiffDataContainer")
 
@@ -58,6 +59,15 @@ class DiffDataContainer(private val fhirContext: FhirContext, strings: Localized
         LEFT, RIGHT
     }
 
+    @Suppress("unused")
+    private fun encodeResourceToRdf(codeSystem: CodeSystem, side: Side) {
+        logger.info("Loaded $side CodeSystem with URL ${codeSystem.url} and version '${codeSystem.version}', state = $loadState")
+        val tempFile = Files.createTempFile("terminodiff-rdf", ".ttl")
+        logger.info("Creating RDF at ${tempFile.absolute()}")
+        val rdfParser = fhirContext.newRDFParser().setPrettyPrint(true)
+        rdfParser.encodeResourceToWriter(codeSystem, tempFile.writer())
+    }
+
     private fun loadCodeSystemResource(resource: InputResource?, side: Side): CodeSystem? {
         if (resource?.localFile == null) return null
         val file = resource.localFile!!
@@ -70,11 +80,12 @@ class DiffDataContainer(private val fhirContext: FhirContext, strings: Localized
                     logger.error("The file at ${file.absolutePath} has an unsupported file type")
                     null
                 }
-            }.also {
-                if (it != null) {
-                    logger.info("Loaded $side CodeSystem with URL ${it.url} and version '${it.version}', state = $loadState")
-                }
             }
+//                try {
+//                    encodeResourceToRdf(it, side)
+//                } catch (e: Exception) {
+//                    logger.error("Failed to encode RDF at ${file.absolutePath}", e)
+//                }
         } catch (e: DataFormatException) {
             logger.error("The file at ${file.absolutePath} could not be parsed as FHIR", e)
             null

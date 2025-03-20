@@ -1,15 +1,14 @@
-import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-    id("org.jetbrains.compose") version "1.1.0"
-    id("org.openjfx.javafxplugin") version "0.0.11"
+    kotlin("jvm") version "2.1.10"
+    id("org.jetbrains.compose") version "1.7.3"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 val projectVersion: String by project
-group = "de.uzl.itcr"
+group = "de.uzl.imbs.skfit"
 version = projectVersion
 
 repositories {
@@ -18,23 +17,23 @@ repositories {
     mavenCentral()
 }
 
-val hapiVersion = "5.7.0"
-val slf4jVersion = "1.7.36"
+val hapiVersion = "6.8.7"
+val slf4jVersion = "2.0.17"
 val graphStreamVersion = "2.0"
-val jGraphTVersion = "1.5.1"
-val material3DesktopVersion = "1.1.0"
-val jungraphtVersion = "1.3"
-val composeDesktopVersion = "1.1.0"
-val ktorVersion = "2.0.0-beta-1"
+val jGraphTVersion = "1.5.2"
+val jungraphtVersion = "1.4"
+val composeDesktopVersion = "1.7.3"
+val ktorVersion = "3.1.1"
+val jenaVersion = "5.3.0"
 
 dependencies {
     testImplementation(kotlin("test"))
     implementation(compose.desktop.currentOs)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("org.jetbrains.compose.components:components-splitpane:$composeDesktopVersion")
-    implementation("org.jetbrains.compose.material3:material3-desktop:$material3DesktopVersion")
     implementation("org.jetbrains.compose.material:material-icons-core-desktop:$composeDesktopVersion")
     implementation("org.jetbrains.compose.material:material-icons-extended-desktop:$composeDesktopVersion")
+    implementation("org.jetbrains.compose.material3:material3-desktop:$composeDesktopVersion")
     implementation("ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion")
     implementation("ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion")
     implementation("ca.uhn.hapi.fhir:hapi-fhir-validation:$hapiVersion")
@@ -47,12 +46,15 @@ dependencies {
     implementation("net.mahdilamb:colormap:0.9.511")
     implementation("li.flor:native-j-file-chooser:1.6.4")
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359") // provides org.xml.sax
-    implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.formdev:flatlaf:2.0.2")
+    implementation("org.apache.commons:commons-lang3:3.17.0")
+    implementation("com.formdev:flatlaf:3.5.4")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
-    implementation("com.fifesoft:rsyntaxtextarea:3.1.6")
+    implementation("com.fifesoft:rsyntaxtextarea:3.6.0")
+    implementation("org.apache.jena:jena-core:$jenaVersion")
+    implementation("org.apache.jena:jena-arq:$jenaVersion")
+
 }
 
 tasks.test {
@@ -70,9 +72,11 @@ javafx {
     modules("javafx.controls", "javafx.swing")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
-    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+        optIn.add("kotlin.RequiresOptIn")
+    }
 }
 
 val composeBuildVersion: String by project
@@ -89,10 +93,10 @@ compose.desktop {
                 packageName = "TerminoDiff"
                 packageVersion = composeBuildVersion
                 description = "Visually compare HL7 FHIR Terminology"
-                vendor = "IT Center for Clinical Research, University of Lübeck"
-                copyright = "Joshua Wiedekopf / IT Center for Clinical Research, 2022-"
+                vendor = "Section for Clinical Research IT, Institute of Medical Biometry and Statistics, University of Lübeck"
+                copyright = "Joshua Wiedekopf / Section for Clinical Research IT, Institute of Medical Biometry and Statistics, 2022-"
 
-                when (composeBuildOs?.toLowerCaseAsciiOnly()) {
+                when (composeBuildOs?.lowercase()) {
                     "ubuntu", "redhat", "debian", "rpm", "deb" -> linux {
                         iconFile.set(resourceDir.file("common/terminodiff.png"))
                         rpmLicenseType = "GPL-3.0"

@@ -10,7 +10,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.ui.graphs.ColorRegistry
-import terminodiff.ui.graphs.Registry
 
 private val logger: Logger = LoggerFactory.getLogger(CombinedGraphBuilder::class.java)
 
@@ -83,7 +82,11 @@ data class CombinedVertex(
 fun CombinedGraph.addCombinedEdge(edge: CombinedEdge) {
     val fromNode = this.vertexSet().find { it.code == edge.fromCode } ?: return
     val toNode = this.vertexSet().find { it.code == edge.toCode } ?: return
-    this.addEdge(fromNode, toNode, edge)
+    if (fromNode != toNode) {
+        this.addEdge(fromNode, toNode, edge)
+    } else {
+        logger.warn("Cyclic edge for node $fromNode to $toNode (property ${edge.property})")
+    }
 }
 
 fun CombinedGraph.getEdgesConnectedToVertex(vertex: CombinedVertex) = this.edgeSet().filter {
@@ -145,7 +148,7 @@ class DiffEdgeTraversal(
         while (hasNext()) {
             val nextNode = next()
             logger.debug("Iteration ${++iteration}")
-            logger.debug("  - Next vertex: $nextNode")
+            logger.debug("  - Next vertex: {}", nextNode)
             logger.debug("  - Edge stack (${edgeStack.count()}): ${edgeStack.joinToString()}")
             logger.debug("  - Node depths (${visitedNodeDepths.count()}): ${
                 visitedNodeDepths.entries.joinToString {

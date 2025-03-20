@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package terminodiff.ui.panes.conceptdiff
 
 import androidx.compose.foundation.BorderStroke
@@ -47,7 +45,7 @@ private fun codeColumnSpec(localizedStrings: LocalizedStrings) =
 @OptIn(ExperimentalMaterial3Api::class)
 private fun graphColumnSpec(localizedStrings: LocalizedStrings, onShowGraph: (String) -> Unit) =
     ColumnSpec<ConceptTableData>(title = localizedStrings.graph, weight = 0.08f) { tableData ->
-        CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
             IconButton(onClick = {
                 onShowGraph.invoke(tableData.code)
             }, modifier = Modifier.size(24.dp)) {
