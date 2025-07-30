@@ -51,6 +51,7 @@ abstract class LocalizedStrings(
     val content: String = "Content",
     val copyright: String = "Copyright",
     val count: String,
+    val couldNotDisplayGraphWindow_: (Exception) -> String,
     val date: String,
     val definition: String = "Definition",
     val description: String,
@@ -88,6 +89,7 @@ abstract class LocalizedStrings(
     val loadedResources: String,
     val mappableCount_: (Int) -> String,
     val metaVersion: String,
+    val markdown: String = "Markdown",
     val metadata: String,
     val metadataDiff: String,
     val metadataDiffResults_: (MetadataComparisonResult) -> String,
@@ -104,6 +106,7 @@ abstract class LocalizedStrings(
     val ok: String = "OK",
     val oneValueIsNull: String,
     val onlyConceptDifferences: String,
+    val onlyDisplayDifferences: String,
     val onlyInLeft: String,
     val onlyInRight: String,
     val open: String,
@@ -170,7 +173,8 @@ enum class SupportedLocale {
     }
 }
 
-class GermanStrings : LocalizedStrings(acceptAll = "Alle akzeptieren",
+class GermanStrings : LocalizedStrings(
+    acceptAll = "Alle akzeptieren",
     acceptedCount_ = { "$it akzeptiert" },
     actions = "Aktionen",
     addLayer = "Ebene hinzufügen",
@@ -212,6 +216,7 @@ class GermanStrings : LocalizedStrings(acceptAll = "Alle akzeptieren",
         }
     },
     contact = "Kontakt",
+    couldNotDisplayGraphWindow_ = { "Konnte den Graphen nicht anzeigen: ${it.message}" },
     count = "Anzahl",
     date = "Datum",
     description = "Beschreibung",
@@ -293,6 +298,7 @@ class GermanStrings : LocalizedStrings(acceptAll = "Alle akzeptieren",
     notRecommended = "Nicht empfohlen",
     oneValueIsNull = "Ein Wert ist null",
     onlyConceptDifferences = "Nur Konzeptunterschiede",
+    onlyDisplayDifferences = "Nur Display-Unterschiede",
     onlyInLeft = "Nur links",
     onlyInRight = "Nur rechts",
     open = "Öffnen",
@@ -366,9 +372,11 @@ class GermanStrings : LocalizedStrings(acceptAll = "Alle akzeptieren",
             }
         }
     },
-    yes = "Ja")
+    yes = "Ja"
+)
 
-class EnglishStrings : LocalizedStrings(acceptAll = "Accept all",
+class EnglishStrings : LocalizedStrings(
+    acceptAll = "Accept all",
     acceptedCount_ = { "$it accepted" },
     actions = "Actions",
     addLayer = "Add layer",
@@ -410,6 +418,7 @@ class EnglishStrings : LocalizedStrings(acceptAll = "Accept all",
         }
     },
     contact = "Contact",
+    couldNotDisplayGraphWindow_ = { "Could not display the graph: ${it.message}" },
     count = "Count",
     date = "Date",
     description = "Description",
@@ -490,6 +499,7 @@ class EnglishStrings : LocalizedStrings(acceptAll = "Accept all",
     notRecommended = "Not recommended",
     oneValueIsNull = "One value is null",
     onlyConceptDifferences = "Only concept differences",
+    onlyDisplayDifferences = "Only display differences",
     onlyInLeft = "Only left",
     onlyInRight = "Only right",
     open = "Open",
@@ -564,7 +574,8 @@ class EnglishStrings : LocalizedStrings(acceptAll = "Accept all",
             }
         }
     },
-    yes = "Yes")
+    yes = "Yes"
+)
 
 fun getStrings(locale: SupportedLocale = SupportedLocale.defaultLocale): LocalizedStrings = when (locale) {
     SupportedLocale.DE -> GermanStrings()

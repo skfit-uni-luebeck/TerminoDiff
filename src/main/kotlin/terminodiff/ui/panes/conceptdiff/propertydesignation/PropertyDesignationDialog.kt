@@ -140,9 +140,9 @@ fun DesignationTable(
     LazyTable(
         modifier = Modifier.padding(8.dp),
         columnSpecs = columnSpecs,
-        backgroundColor = colorScheme.surfaceVariant,
+        backgroundColor = colorScheme.surfaceDim,
         lazyListState = designationListState,
-        zebraStripingColor = colorScheme.secondaryContainer,
+        zebraStripingColor = colorScheme.surfaceBright,
         tableData = tableData,
         localizedStrings = localizedStrings,
     ) {
@@ -159,9 +159,9 @@ fun DiffDesignationTable(
 ) = LazyTable(
     modifier = Modifier.padding(8.dp),
     columnSpecs = columnSpecs,
-    backgroundColor = colorScheme.surfaceVariant,
+    backgroundColor = colorScheme.surfaceDim,
     lazyListState = designationListState,
-    zebraStripingColor = colorScheme.secondaryContainer,
+    zebraStripingColor = colorScheme.surfaceBright,
     tableData = diff.designationComparison,
     localizedStrings = localizedStrings,
 ) { it.key.toString() }
@@ -180,9 +180,9 @@ fun SingleConceptPropertyTable(
     LazyTable(
         modifier = Modifier.padding(8.dp),
         columnSpecs = identicalColumnSpecs,
-        backgroundColor = colorScheme.surfaceVariant,
+        backgroundColor = colorScheme.surfaceDim,
         lazyListState = lazyListState,
-        zebraStripingColor = colorScheme.secondaryContainer,
+        zebraStripingColor = colorScheme.surfaceBright,
         tableData = tableData,
         localizedStrings = localizedStrings,
     ) { it.propertyCode }
@@ -197,9 +197,9 @@ fun DiffPropertyTable(
 ) = LazyTable(
     modifier = Modifier.padding(8.dp),
     columnSpecs = diffColumnSpecs,
-    backgroundColor = colorScheme.surfaceVariant,
+    backgroundColor = colorScheme.surfaceDim,
     lazyListState = lazyListState,
-    zebraStripingColor = colorScheme.secondaryContainer,
+    zebraStripingColor = colorScheme.surfaceBright,
     tableData = conceptDiff.propertyComparison,
     localizedStrings = localizedStrings,
 ) { it.key }

@@ -81,9 +81,9 @@ fun ConceptMappingEditorContent(
             cellHeight = columnHeight,
             tableData = conceptMapState.conceptMap!!.group.elements,
             localizedStrings = localizedStrings,
-            backgroundColor = colorScheme.surfaceVariant,
-            zebraStripingColor = colorScheme.secondaryContainer,
+            backgroundColor = colorScheme.surfaceDim,
             lazyListState = lazyListState,
+            zebraStripingColor = colorScheme.surfaceBright,
             keyFun = { it.code.value })
     }
 }

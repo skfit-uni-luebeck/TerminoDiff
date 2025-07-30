@@ -5,6 +5,7 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.jgrapht.Graph
 import org.jgrapht.graph.builder.GraphTypeBuilder
 import terminodiff.engine.concepts.ConceptDiff
+import terminodiff.engine.concepts.ConceptDiffItem
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.terminodiff.engine.graph.*
 import terminodiff.terminodiff.engine.metadata.MetadataComparisonResult
@@ -28,6 +29,7 @@ class CodeSystemDiffBuilder(
         }
     }
     val conceptDifferences by mutableStateOf(TreeMap<String, ConceptDiff>())
+    val onlyDisplayDifferences by mutableStateOf(TreeMap<String, ConceptDiff>())
     val onlyInLeftConcepts = mutableStateListOf<String>()
     val onlyInRightConcepts = mutableStateListOf<String>()
     private val inBothConcepts = mutableStateListOf<String>()
@@ -76,6 +78,14 @@ class CodeSystemDiffBuilder(
             }"
         }
         combinedGraph = buildCombinedGraph()
+        conceptDifferences.forEach { (code, conceptDiff) ->
+            val displayDiff = conceptDiff.conceptComparison.find {
+                it.diffItem == ConceptDiff.Companion.displayDiffItem
+            }
+            if (displayDiff != null && displayDiff.result == ConceptDiffItem.ConceptDiffResultEnum.DIFFERENT) {
+                onlyDisplayDifferences[code] = conceptDiff
+            }
+        }
         return this
     }
 

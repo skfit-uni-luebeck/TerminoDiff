@@ -30,6 +30,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ca.uhn.fhir.context.FhirContext
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
+import org.apache.logging.log4j.kotlin.logger
 import org.jetbrains.compose.resources.decodeToImageVector
 import terminodiff.engine.resources.DiffDataContainer
 import terminodiff.i18n.LocalizedStrings
@@ -119,10 +122,15 @@ fun TerminoDiffTopAppBar(
                 }
 
                 Button(colors = filledColors, onClick = {
-                    showDiffGraphSwingWindow(diffGraph = diffDataContainer.codeSystemDiff!!.differenceGraph,
-                        frameTitle = localizedStrings.diffGraph,
-                        useDarkTheme = useDarkTheme,
-                        localizedStrings = localizedStrings)
+                    try {
+                        showDiffGraphSwingWindow(diffGraph = diffDataContainer.codeSystemDiff!!.differenceGraph,
+                            frameTitle = localizedStrings.diffGraph,
+                            useDarkTheme = useDarkTheme,
+                            localizedStrings = localizedStrings)
+                    } catch (e: Exception) {
+                        logger.error { e }
+                        Alert(Alert.AlertType.ERROR, localizedStrings.couldNotDisplayGraphWindow_(e), ButtonType.OK).showAndWait()
+                    }
                 }) {
                     Text(localizedStrings.diffGraph)
                 }

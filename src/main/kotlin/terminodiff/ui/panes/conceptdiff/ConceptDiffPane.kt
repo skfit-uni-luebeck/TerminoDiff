@@ -4,6 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -13,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.apache.logging.log4j.kotlin.Logging
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import terminodiff.engine.concepts.ConceptDiff
 import terminodiff.engine.concepts.ConceptDiffItem
 import terminodiff.engine.concepts.KeyedListDiffResultKind
@@ -20,8 +25,10 @@ import terminodiff.engine.graph.CodeSystemGraphBuilder
 import terminodiff.engine.graph.FhirConceptDetails
 import terminodiff.engine.resources.DiffDataContainer
 import terminodiff.i18n.LocalizedStrings
+import terminodiff.terminodiff.report.DiffReportGenerator
 import terminodiff.terminodiff.ui.panes.conceptdiff.display.DisplayDetailsDialog
 import terminodiff.terminodiff.ui.panes.conceptdiff.propertydesignation.PropertyDesignationDialog
+import terminodiff.ui.panes.conceptmap.showRoCodeViewer
 import terminodiff.ui.theme.DiffColors
 import terminodiff.ui.theme.getDiffColors
 import terminodiff.ui.util.ColumnSpec
@@ -54,6 +61,7 @@ fun ConceptDiffPanel(
             ToggleableChipSpec(ToggleableChipSpec.showIdentical, localizedStrings.showIdentical),
             ToggleableChipSpec(ToggleableChipSpec.showDifferent, localizedStrings.showDifferent),
             ToggleableChipSpec(ToggleableChipSpec.onlyConceptDifferences, localizedStrings.onlyConceptDifferences),
+            ToggleableChipSpec(ToggleableChipSpec.onlyDisplayDifferences, localizedStrings.onlyDisplayDifferences),
             ToggleableChipSpec(ToggleableChipSpec.onlyInLeft, localizedStrings.onlyInLeft),
             ToggleableChipSpec(ToggleableChipSpec.onlyInRight, localizedStrings.onlyInRight)
         )
@@ -92,6 +100,18 @@ fun ConceptDiffPanel(
         }
     }
 
+    val markdownDialogData: MutableState<String?> = remember {
+        mutableStateOf(null)
+    }
+
+    if (markdownDialogData.value != null) {
+        MarkdownDialog(
+            markdownDialogData.value!!,
+            localizedStrings = localizedStrings,
+            isDarkTheme = useDarkTheme,
+        )
+    }
+
     Card(
         modifier = Modifier.padding(8.dp).fillMaxSize(),
         elevation = 8.dp,
@@ -105,9 +125,16 @@ fun ConceptDiffPanel(
                     ConceptDiffPane.logger.info("changed filter to $it")
                     activeFilter = it
                     coroutineScope.launch {
-                        // scroll has to be invoked from a coroutine
+                        // the scroll has to be invoked from a coroutine
                         lazyListState.scrollToItem(0)
                     }
+                }
+                IconButton(onClick = {
+                    markdownDialogData.value = DiffReportGenerator().generateDiffReport(
+                        diffDataContainer = diffDataContainer
+                    )
+                }) {
+                    Icon(Icons.Default.ContentCopy, null)
                 }
             }
 
@@ -137,6 +164,8 @@ fun filterDiffItems(diffDataContainer: DiffDataContainer, activeFilter: String):
     val rightGraphBuilder = diffDataContainer.rightGraphBuilder ?: throw NullPointerException()
     val onlyInLeftConcepts = diffDataContainer.codeSystemDiff?.onlyInLeftConcepts ?: throw NullPointerException()
     val onlyInRightConcepts = diffDataContainer.codeSystemDiff?.onlyInRightConcepts ?: throw NullPointerException()
+    val onlyDisplayDifferences =
+        diffDataContainer.codeSystemDiff?.onlyDisplayDifferences ?: throw NullPointerException()
     val conceptDiff = diffDataContainer.codeSystemDiff?.conceptDifferences ?: throw NullPointerException()
     val differentCodesInDiff = conceptDiff.filterValues { diff ->
         when {
@@ -154,6 +183,7 @@ fun filterDiffItems(diffDataContainer: DiffDataContainer, activeFilter: String):
         ToggleableChipSpec.onlyInRight -> onlyInRightConcepts
         ToggleableChipSpec.showIdentical -> sameCodesInDiff
         ToggleableChipSpec.onlyConceptDifferences -> differentCodesInDiff
+        ToggleableChipSpec.onlyDisplayDifferences -> onlyDisplayDifferences.keys
         else -> onlyInLeftConcepts.plus(onlyInRightConcepts).plus(conceptDiff.keys) // show all
     }.toSortedSet().toList()
 
@@ -166,6 +196,18 @@ fun filterDiffItems(diffDataContainer: DiffDataContainer, activeFilter: String):
         rightGraphBuilder
     )
 
+}
+
+@Composable
+fun MarkdownDialog(value: String, localizedStrings: LocalizedStrings, isDarkTheme: Boolean) {
+    showRoCodeViewer(
+        codeText = value,
+        titleText = localizedStrings.markdown,
+        syntax = SyntaxConstants.SYNTAX_STYLE_MARKDOWN,
+        isDarkTheme = isDarkTheme,
+        rows = 120,
+        columns = 200
+    )
 }
 
 data class TableData(
@@ -279,9 +321,9 @@ fun TableScreen(
     }
     LazyTable(
         columnSpecs = columnSpecs,
-        backgroundColor = colorScheme.surfaceVariant,
+        backgroundColor = colorScheme.surfaceDim,
         lazyListState = lazyListState,
-        zebraStripingColor = colorScheme.secondaryContainer,
+        zebraStripingColor = colorScheme.surfaceBright,
         tableData = containedData,
         dataAlreadySorted = true,
         localizedStrings = localizedStrings,

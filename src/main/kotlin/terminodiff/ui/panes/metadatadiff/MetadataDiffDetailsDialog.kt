@@ -50,7 +50,7 @@ private fun DrawTable(
     comparison: MetadataListComparison<*, *>,
     localizedStrings: LocalizedStrings,
     diffColors: DiffColors,
-    listState: LazyListState,
+    lazyListState: LazyListState,
 ) {
 
     /**
@@ -65,9 +65,9 @@ private fun DrawTable(
         modifier = Modifier.padding(8.dp),
         cellHeight = 100.dp,
         columnSpecs = columnSpecs,
-        backgroundColor = colorScheme.primaryContainer,
-        lazyListState = listState,
-        zebraStripingColor = colorScheme.tertiaryContainer,
+        backgroundColor = colorScheme.surfaceDim,
+        lazyListState = lazyListState,
+        zebraStripingColor = colorScheme.surfaceBright,
         tableData = comparisonResult,
         localizedStrings = localizedStrings,
         keyFun = keyFun,

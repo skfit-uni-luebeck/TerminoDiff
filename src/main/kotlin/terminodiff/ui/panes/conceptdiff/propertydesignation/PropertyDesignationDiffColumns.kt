@@ -19,32 +19,40 @@ typealias DesignationDiffResult = KeyedListDiffResult<DesignationKey, String>
 fun columnSpecsDifferentProperties(
     localizedStrings: LocalizedStrings,
     diffColors: DiffColors,
-): List<ColumnSpec<PropertyDiffResult>> = listOf(propertyCodeColumnSpec(localizedStrings) { it.key },
+): List<ColumnSpec<PropertyDiffResult>> = listOf(
+    propertyCodeColumnSpec(localizedStrings) { it.key },
     propertyComparisonColumnSpec(localizedStrings, diffColors),
     propertyTypeColumnSpec(localizedStrings) { it.propertyType },
     leftPropertyValueColumnSpec(localizedStrings),
-    rightPropertyValueColumnSpec(localizedStrings))
+    rightPropertyValueColumnSpec(localizedStrings)
+)
 
 fun columnSpecsIdenticalProperties(
     localizedStrings: LocalizedStrings,
-): List<ColumnSpec<FhirConceptProperty>> = listOf(propertyCodeColumnSpec(localizedStrings) { it.propertyCode },
+): List<ColumnSpec<FhirConceptProperty>> = listOf(
+    propertyCodeColumnSpec(localizedStrings) { it.propertyCode },
     propertyTypeColumnSpec(localizedStrings) { it.type },
-    propertyValueColumnSpec(localizedStrings))
+    propertyValueColumnSpec(localizedStrings)
+)
 
 fun columnSpecsDifferentDesignations(
     localizedStrings: LocalizedStrings,
     diffColors: DiffColors,
-): List<ColumnSpec<DesignationDiffResult>> = listOf(designationLanguageColumnSpec(localizedStrings) { it.key.first },
+): List<ColumnSpec<DesignationDiffResult>> = listOf(
+    designationLanguageColumnSpec(localizedStrings) { it.key.first },
     designationUseColumnSpec(localizedStrings) { it.key.second },
     designationComparisonColumnSpec(localizedStrings, diffColors),
     leftDesignationValueColumnSpec(localizedStrings),
-    rightDesignationValueColumnSpec(localizedStrings))
+    rightDesignationValueColumnSpec(localizedStrings)
+)
 
 fun columnSpecsIdenticalDesignations(
     localizedStrings: LocalizedStrings,
-): List<ColumnSpec<FhirConceptDesignation>> = listOf(designationLanguageColumnSpec(localizedStrings) { it.language },
+): List<ColumnSpec<FhirConceptDesignation>> = listOf(
+    designationLanguageColumnSpec(localizedStrings) { it.language },
     designationUseColumnSpec(localizedStrings) { it.use?.let(::formatCoding) },
-    designationValueColumnSpec(localizedStrings))
+    designationValueColumnSpec(localizedStrings)
+)
 
 private fun <T> designationLanguageColumnSpec(localizedStrings: LocalizedStrings, languageGetter: (T) -> String?) =
     ColumnSpec<T>(localizedStrings.language, weight = 0.2f) {
@@ -105,15 +113,17 @@ private fun propertyComparisonColumnSpec(localizedStrings: LocalizedStrings, dif
     }
 
 private fun leftPropertyValueColumnSpec(localizedStrings: LocalizedStrings) =
-    ColumnSpec<PropertyDiffResult>(title = localizedStrings.leftValue,
+    ColumnSpec<PropertyDiffResult>(
+        title = localizedStrings.leftValue,
         weight = 0.4f,
         mergeIf = { it.result == KeyedListDiffResultKind.IDENTICAL }) {
-        if (it.result != KeyedListDiffResultKind.KEY_ONLY_IN_LEFT) {
+        if (it.leftValue != null) {
             textForValue(it.leftValue, limit = 10)
         }
     }
 
 private fun rightPropertyValueColumnSpec(localizedStrings: LocalizedStrings) =
     ColumnSpec<PropertyDiffResult>(title = localizedStrings.rightValue, weight = 0.4f) {
-        if (it.result != KeyedListDiffResultKind.KEY_ONLY_IN_RIGHT) textForValue(it.rightValue?.joinToString())
+        if (it.rightValue != null)
+            textForValue(it.rightValue, limit = 10)
     }

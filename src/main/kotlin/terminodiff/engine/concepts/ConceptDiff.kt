@@ -22,10 +22,17 @@ data class ConceptDiff(
         }]"
     }
 
-    companion object: Logging {
+    companion object : Logging {
+
+        val displayDiffItem = ConceptDiffItem({ display }, { display })
+        val definitionDiffItem = ConceptDiffItem({ definition }, { definition })
+
 
         private val diffItems =
-            listOf(ConceptDiffItem({ display }, { display }), ConceptDiffItem({ definition }, { definition }))
+            listOf(
+                displayDiffItem,
+                definitionDiffItem
+            )
 
         private fun getPropertyType(
             leftProperties: PropertyMap,
@@ -42,10 +49,12 @@ data class ConceptDiff(
                         logger.warn("The property type for prop-code='$key' is null, this is not supported")
                         null
                     }
+
                     propertyType != rightProperties[key] -> {
                         logger.warn("The property type for prop-code='$key' is different, this is not supported")
                         null
                     }
+
                     else -> propertyType
                 }
             }
@@ -62,20 +71,24 @@ data class ConceptDiff(
             }
             val leftProperty = leftConcept.property
             val rightProperty = rightConcept.property
-            val propertyDiff: PropertyDiff = KeyedListDiff(left = leftProperty,
+            val propertyDiff: PropertyDiff = KeyedListDiff(
+                left = leftProperty,
                 right = rightProperty,
                 getKey = { it.propertyCode },
                 getStringValue = { it.value }).executeDiff().mapNotNull { result ->
                 getPropertyType(leftProperties, rightProperties, result.key, result.result)?.let { propertyType ->
-                    PropertyDiffResult(result = result.result,
+                    PropertyDiffResult(
+                        result = result.result,
                         key = result.key,
                         leftValue = result.leftValue,
                         rightValue = result.rightValue,
-                        propertyType = propertyType)
+                        propertyType = propertyType
+                    )
                 }
 
             }
-            val designationDiff = KeyedListDiff(left = leftConcept.designation,
+            val designationDiff = KeyedListDiff(
+                left = leftConcept.designation,
                 right = rightConcept.designation,
                 getKey = { it.language to it.use?.let { coding -> formatCoding(coding) } },
                 getStringValue = {
@@ -131,15 +144,23 @@ class KeyedListDiff<ElementType, KeyType>(
         val rightKeys = right.map { getKey.invoke(it) }.toSet()
         val onlyInLeft = leftKeys.filter { it !in rightKeys }.toSet()
         onlyInLeft.forEach { key ->
-            diffResult.add(KeyedListDiffResult(result = KeyedListDiffResultKind.KEY_ONLY_IN_LEFT,
+            diffResult.add(
+                KeyedListDiffResult(
+                    result = KeyedListDiffResultKind.KEY_ONLY_IN_LEFT,
                 key = key,
-                leftValue = left.filter { et -> getKey.invoke(et) == key }.map(getStringValue)))
+                leftValue = left.filter { et -> getKey.invoke(et) == key }.map(getStringValue)
+            )
+            )
         }
         val onlyInRight = rightKeys.filter { it !in leftKeys }.toSet()
         onlyInRight.forEach { key ->
-            diffResult.add(KeyedListDiffResult(result = KeyedListDiffResultKind.KEY_ONLY_IN_RIGHT,
+            diffResult.add(
+                KeyedListDiffResult(
+                    result = KeyedListDiffResultKind.KEY_ONLY_IN_RIGHT,
                 key = key,
-                rightValue = right.filter { et -> getKey.invoke(et) == key }.map(getStringValue)))
+                rightValue = right.filter { et -> getKey.invoke(et) == key }.map(getStringValue)
+            )
+            )
         }
         val inBoth = leftKeys.plus(rightKeys).minus(onlyInLeft).minus(onlyInRight)
         diffResult.addAll(left.filter { getKey.invoke(it) in inBoth }.groupBy(getKey).mapNotNull { l ->

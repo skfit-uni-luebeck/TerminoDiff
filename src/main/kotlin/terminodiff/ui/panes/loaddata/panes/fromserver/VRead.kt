@@ -135,9 +135,9 @@ fun VReadTable(
     LazyTable(
         modifier = modifier.padding(8.dp),
         columnSpecs = columnSpecs(localizedStrings, leftSelection, rightSelection, onSelectLeft, onSelectRight),
-        backgroundColor = colorScheme.surfaceVariant,
+        backgroundColor = colorScheme.surfaceDim,
         lazyListState = lazyListState,
-        zebraStripingColor = colorScheme.secondaryContainer,
+        zebraStripingColor = colorScheme.surfaceBright,
         tableData = vReadVersions,
         localizedStrings = localizedStrings,
         keyFun = DownloadableCodeSystem::metaVersion,

@@ -8,34 +8,64 @@ import java.awt.BorderLayout
 import javax.swing.JFrame
 import javax.swing.JPanel
 
-fun showJsonViewer(jsonText: String, isDarkTheme: Boolean) {
-    JsonROTextEditor(jsonText = jsonText, isDarkTheme = isDarkTheme).isVisible = true
+fun showJsonViewer(jsonText: String, isDarkTheme: Boolean) = showRoCodeViewer(
+    codeText = jsonText,
+    syntax = SyntaxConstants.SYNTAX_STYLE_JSON,
+    isDarkTheme = isDarkTheme,
+    titleText = "FHIR JSON"
+)
+
+fun showRoCodeViewer(
+    codeText: String,
+    syntax: String,
+    isDarkTheme: Boolean,
+    titleText: String,
+    rows: Int = 40,
+    columns: Int = 80,
+) {
+    RoTextEditor(
+        codeText = codeText,
+        syntax = syntax,
+        isDarkTheme = isDarkTheme,
+        titleText = titleText,
+        rows = rows,
+        columns = columns,
+    ).apply {
+        isVisible = true
+    }
 }
 
-class JsonROTextEditor(val jsonText: String, val isDarkTheme: Boolean) : JFrame() {
+class RoTextEditor(
+    codeText: String,
+    syntax: String,
+    isDarkTheme: Boolean,
+    titleText: String,
+    rows: Int = 40,
+    columns: Int = 80,
+) : JFrame() {
     init {
         val cp = JPanel(BorderLayout()).apply {
-            val textArea = RSyntaxTextArea(40, 80).apply {
-                syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
+            val textArea = RSyntaxTextArea(rows, columns).apply {
+                syntaxEditingStyle = syntax
                 isCodeFoldingEnabled = true
                 antiAliasingEnabled = true
                 isEditable = false
             }
             applyTheme(isDarkTheme, textArea)
             val sp = RTextScrollPane(textArea).apply {
-                textArea.text = jsonText
+                textArea.text = codeText
             }
             add(sp)
         }
         contentPane = cp
-        title = "FHIR JSON"
+        title = titleText
         defaultCloseOperation = DISPOSE_ON_CLOSE
         pack()
         setLocationRelativeTo(null)
     }
 
     private fun applyTheme(darkTheme: Boolean, textArea: RSyntaxTextArea) {
-        val filename = "/org/fife/ui/rsyntaxtextarea/themes/${if(darkTheme) "dark.xml" else "default.xml"}"
+        val filename = "/org/fife/ui/rsyntaxtextarea/themes/${if (darkTheme) "dark.xml" else "default.xml"}"
         val theme = Theme.load(javaClass.getResourceAsStream(filename))
         theme.apply(textArea)
     }

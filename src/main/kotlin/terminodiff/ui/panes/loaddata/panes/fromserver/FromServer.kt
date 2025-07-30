@@ -302,9 +302,9 @@ fun ListOfResources(
     }
     LazyTable(
         columnSpecs = columnSpecs,
-        backgroundColor = colorScheme.surfaceVariant,
+        backgroundColor = colorScheme.surfaceDim,
         lazyListState = lazyListState,
-        zebraStripingColor = colorScheme.secondaryContainer,
+        zebraStripingColor = colorScheme.surfaceBright,
         tableData = resourceList,
         localizedStrings = localizedStrings,
         keyFun = DownloadableCodeSystem::id,

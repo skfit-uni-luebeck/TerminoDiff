@@ -101,9 +101,9 @@ fun MetadataDiffTable(
                 diffDataContainer,
                 onShowDetailsClick
             ),
-            backgroundColor = colorScheme.surfaceVariant,
+            backgroundColor = colorScheme.surfaceDim,
             lazyListState = lazyListState,
-            zebraStripingColor = colorScheme.secondaryContainer,
+            zebraStripingColor = colorScheme.surfaceBright,
             tableData = sortedData,
             dataAlreadySorted = true,
             localizedStrings = localizedStrings,
