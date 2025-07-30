@@ -19,7 +19,7 @@ jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: JDK Ubuntu
       uses: actions/setup-java@v2
       with:
@@ -38,7 +38,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: JDK Windows
       uses: actions/setup-java@v2
       with:
@@ -57,7 +57,7 @@ jobs:
   build-mac:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: JDK macOS
       uses: actions/setup-java@v2
       with:
