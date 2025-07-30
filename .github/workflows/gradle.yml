@@ -27,7 +27,7 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
     - name: Gradle Ubuntu
-      uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
+      uses: gradle/gradle-build-action@093dfe9d598ec5a42246855d09b49dc76803c005
       with:
         arguments: -PcomposeBuildOs=ubuntu packageDeb
     - name: Upload DEB
@@ -46,7 +46,7 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
     - name: Gradle Windows
-      uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
+      uses: gradle/gradle-build-action@093dfe9d598ec5a42246855d09b49dc76803c005
       with:
         arguments: -PcomposeBuildOs=windows packageExe
     - name: Upload EXE
@@ -65,7 +65,7 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
     - name: Gradle Mac
-      uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
+      uses: gradle/gradle-build-action@093dfe9d598ec5a42246855d09b49dc76803c005
       with:
         arguments: -PcomposeBuildOs=mac packageDmg
     - name: Upload DMG
