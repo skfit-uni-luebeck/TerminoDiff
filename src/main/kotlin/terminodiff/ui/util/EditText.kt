@@ -26,8 +26,7 @@ import androidx.compose.ui.unit.dp
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.ui.MouseOverPopup
-import java.net.MalformedURLException
-import java.net.URL
+import java.net.URI
 import java.util.*
 
 fun isError(validationResult: EditTextSpec.ValidationResult?) = when (validationResult) {
@@ -136,8 +135,8 @@ data class EditTextSpec<T>(
 }
 
 fun String.isUrl(): Boolean = try {
-    URL(this).let { true }
-} catch (e: MalformedURLException) {
+    URI.create(this).let { true }
+} catch (_: IllegalArgumentException) {
     false
 }
 

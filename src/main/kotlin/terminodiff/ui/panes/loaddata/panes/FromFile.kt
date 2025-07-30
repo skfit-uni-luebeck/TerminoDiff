@@ -98,7 +98,7 @@ private fun FromFileScreen(
             enabled = isValidPath,
             onClick = { onLoadLeftFile(InputResource(InputResource.Kind.FILE, selectedFile)) }) {
             AppImageIcon(
-                relativePath = AppIconResource.icLoadLeftFile,
+                relativePath = AppIconResource.IC_LOAD_LEFT_FILE,
                 label = localizedStrings.loadLeft,
                 tint = buttonColors.contentColor(isValidPath)
             )
@@ -110,7 +110,7 @@ private fun FromFileScreen(
             enabled = isValidPath,
             onClick = { onLoadRightFile(InputResource(InputResource.Kind.FILE, selectedFile)) }) {
             AppImageIcon(
-                relativePath = AppIconResource.icLoadRightFile,
+                relativePath = AppIconResource.IC_LOAD_RIGHT_FILE,
                 label = localizedStrings.loadRight,
                 tint = buttonColors.contentColor(isValidPath)
             )
@@ -126,22 +126,13 @@ private fun getFileChooser(title: String): JFileChooser {
         addChoosableFileFilter(FileNameExtensionFilter("FHIR+JSON (*.json)", "json", "JSON"))
         addChoosableFileFilter(FileNameExtensionFilter("FHIR+XML (*.xml)", "xml", "XML"))
     }
-//    return when (SystemUtils.IS_OS_MAC) {
-//        // NativeJFileChooser hangs on Azul Zulu 17 + JavaFX on macOS 12.1 aarch64.
-//        // With Azul Zulu w/o JFX, currently the file browser does not work at all on a M1 MBA.
-//        // The behaviour of NativeJFileChooser is different on Intel Macs, where it appears to work.
-//        // Hence, the non-native file chooser from Swing is used instead, which is not *nearly* as nice
-//        // as the native dialog on Windows, but it seems to be much more stable.
-//        true -> JFileChooser(AppPreferences.fileBrowserDirectory)
-//        else -> NativeJFileChooser(AppPreferences.fileBrowserDirectory)
-//}
 }
 
 fun showLoadFileDialog(title: String): File? = getFileChooser(title).let { chooser ->
     when (chooser.showOpenDialog(null)) {
         JFileChooser.CANCEL_OPTION -> null
         JFileChooser.APPROVE_OPTION -> {
-            return@let chooser.selectedFile?.absoluteFile ?: return null
+            return@let chooser.selectedFile?.absoluteFile
         }
 
         else -> null

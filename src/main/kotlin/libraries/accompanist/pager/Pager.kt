@@ -312,7 +312,7 @@ private class ConsumeFlingNestedScrollConnection(
     ): Offset = when (source) {
         // We can consume all resting fling scrolls so that they don't propagate up to the
         // Pager
-        NestedScrollSource.Fling -> available.consume(consumeHorizontal, consumeVertical)
+        NestedScrollSource.SideEffect -> available.consume(consumeHorizontal, consumeVertical)
         else -> Offset.Zero
     }
 
@@ -371,6 +371,7 @@ private class PagerScopeImpl(
  * The returned offset can positive or negative, depending on whether which direction the [page] is
  * compared to the current scroll position.
  */
+@Suppress("unused")
 @ExperimentalPagerApi
 fun PagerScope.calculateCurrentOffsetForPage(page: Int): Float {
     return (currentPage + currentPageOffset) - page

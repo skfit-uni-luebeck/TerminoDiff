@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberDialogState
 
@@ -21,11 +21,17 @@ fun TerminodiffDialog(
     onCloseRequest: () -> Unit,
     contentPadding: Dp = 4.dp,
     content: @Composable ColumnScope.() -> Unit,
-) = Dialog(onCloseRequest = onCloseRequest,
-    title = title,
-    state = rememberDialogState(position = windowPosition, size = size)) {
-    Column(modifier = Modifier.background(colorScheme.surfaceVariant).fillMaxSize().padding(contentPadding),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        content = content)
+) {
+    DialogWindow(
+        onCloseRequest = onCloseRequest,
+        title = title,
+        state = rememberDialogState(position = windowPosition, size = size)
+    ) {
+        Column(
+            modifier = Modifier.background(colorScheme.surfaceVariant).fillMaxSize().padding(contentPadding),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            content = content
+        )
+    }
 }

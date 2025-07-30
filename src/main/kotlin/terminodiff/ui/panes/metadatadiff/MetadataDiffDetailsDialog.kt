@@ -41,7 +41,7 @@ fun MetadataDiffDetailsDialog(
 }
 
 /**
- * this function is much more complex that it feels like it should be, but erased generic type parameters do require
+ * This function is much more complex than it feels like it should be, but erased generic type parameters do require
  * special care. The when block uses Kotlin Smart Casts to provide the right type parameters to the LazyTable composable
  * -> and it works well :)
  */

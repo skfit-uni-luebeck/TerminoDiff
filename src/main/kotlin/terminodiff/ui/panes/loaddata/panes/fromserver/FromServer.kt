@@ -166,7 +166,7 @@ suspend fun retrieveBundleOfDownloadableResources(
                 resources.addAll(entries)
                 FromServer.logger.debug { "Read a page of ${entries.size}, now read ${resources.size}" }
                 nextUrl = bundle.getLink("next")?.url?.let { Url(it) }
-            } catch (e: DataFormatException) {
+            } catch (_: DataFormatException) {
                 return null
             }
         }
@@ -279,7 +279,7 @@ fun ListOfResources(
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
         leftRightButton(
             text = localizedStrings.loadLeft,
-            iconPath = AppIconResource.icLoadLeftFile,
+            iconPath = AppIconResource.IC_LOAD_LEFT_FILE,
             onLoadFile = onLoadLeftFile
         )
 
@@ -296,7 +296,7 @@ fun ListOfResources(
 
         leftRightButton(
             text = localizedStrings.loadRight,
-            iconPath = AppIconResource.icLoadRightFile,
+            iconPath = AppIconResource.IC_LOAD_RIGHT_FILE,
             onLoadFile = onLoadRightFile
         )
     }

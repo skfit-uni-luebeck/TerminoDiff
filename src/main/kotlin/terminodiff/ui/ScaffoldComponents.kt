@@ -27,11 +27,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.loadXmlImageVector
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ca.uhn.fhir.context.FhirContext
-import org.xml.sax.InputSource
+import org.jetbrains.compose.resources.decodeToImageVector
 import terminodiff.engine.resources.DiffDataContainer
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.terminodiff.engine.conceptmap.ConceptMapState
@@ -45,19 +44,20 @@ typealias ImageRelativePath = String
 
 class AppIconResource {
     companion object {
-        const val icDarkMode: ImageRelativePath = "icons/ic-dark-mode.xml"
-        const val icChangeLanguage: ImageRelativePath = "icons/ic-language.xml"
-        const val icLoadLeftFile: ImageRelativePath = "icons/ic-open-left.xml"
-        const val icLoadRightFile: ImageRelativePath = "icons/ic-open-right.xml"
-        const val icReload: ImageRelativePath = "icons/ic-reload.xml"
-        const val icUniLuebeck: ImageRelativePath = "uzl-logo.xml"
+        const val IC_CHANGE_LANGUAGE: ImageRelativePath = "icons/ic-language.xml"
+        const val IC_LOAD_LEFT_FILE: ImageRelativePath = "icons/ic-open-left.xml"
+        const val IC_LOAD_RIGHT_FILE: ImageRelativePath = "icons/ic-open-right.xml"
+        const val IC_RELOAD: ImageRelativePath = "icons/ic-reload.xml"
+        const val IC_UNI_LUEBECK: ImageRelativePath = "uzl-logo.xml"
 
         fun loadFile(relativePath: ImageRelativePath): InputStream? =
             AppIconResource::class.java.classLoader.getResourceAsStream(relativePath)
 
         @Composable
         fun loadXmlImageVector(stream: InputStream): ImageVector =
-            stream.buffered().use { loadXmlImageVector(InputSource(it), LocalDensity.current) }
+            stream.buffered().use {
+                it.readAllBytes().decodeToImageVector(LocalDensity.current)
+            }
 
         @Composable
         fun loadXmlImageVector(relativePath: ImageRelativePath): ImageVector =
@@ -96,7 +96,7 @@ fun TerminoDiffTopAppBar(
             Text(modifier = Modifier.padding(end = 16.dp),
                 text = localizedStrings.terminoDiff,
                 color = colorScheme.onPrimaryContainer)
-            AppImageIcon(relativePath = AppIconResource.icUniLuebeck,
+            AppImageIcon(relativePath = AppIconResource.IC_UNI_LUEBECK,
                 label = localizedStrings.uniLuebeck,
                 tint = colorScheme.onPrimaryContainer,
                 modifier = Modifier.fillMaxHeight(0.8f))
@@ -153,7 +153,7 @@ fun TerminoDiffTopAppBar(
 
         MouseOverPopup(localizedStrings.changeLanguage) {
             IconActionButton(onClick = onLocaleChange,
-                imageRelativePath = AppIconResource.icChangeLanguage,
+                imageRelativePath = AppIconResource.IC_CHANGE_LANGUAGE,
                 label = localizedStrings.changeLanguage)
         }
 
@@ -165,7 +165,7 @@ fun TerminoDiffTopAppBar(
 
         MouseOverPopup(localizedStrings.reload) {
             IconActionButton(onClick = onReload,
-                imageRelativePath = AppIconResource.icReload,
+                imageRelativePath = AppIconResource.IC_RELOAD,
                 label = localizedStrings.reload)
         }
     })

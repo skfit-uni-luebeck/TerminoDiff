@@ -34,7 +34,10 @@ import kotlin.io.path.absolutePathString
 object TerminoDiffApp : Logging
 
 val appDirs by lazy {
-    AppDirs("TerminoDiff", "de.uzl.imbs.skfit")
+    AppDirs {
+        appName = "TerminoDiff"
+        appAuthor = "de.uzl.imbs.skfit"
+    }
 }
 
 val resourcesDir = System.getProperty("compose.application.resources.dir")?.let { path ->

@@ -114,12 +114,12 @@ fun chipForDiffResult(
         KeyedListDiffResultKind.KEY_ONLY_IN_LEFT -> {
             colorPair = diffColors.redPair
             chipText = localizedStrings.onlyInLeft
-            chipIcon = AppIconResource.loadXmlImageVector(AppIconResource.icLoadLeftFile)
+            chipIcon = AppIconResource.loadXmlImageVector(AppIconResource.IC_LOAD_LEFT_FILE)
         }
         KeyedListDiffResultKind.KEY_ONLY_IN_RIGHT -> {
             colorPair = diffColors.redPair
             chipText = localizedStrings.onlyInRight
-            chipIcon = AppIconResource.loadXmlImageVector(AppIconResource.icLoadRightFile)
+            chipIcon = AppIconResource.loadXmlImageVector(AppIconResource.IC_LOAD_RIGHT_FILE)
         }
         else -> {
             colorPair = diffColors.yellowPair

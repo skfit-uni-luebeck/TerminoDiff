@@ -151,8 +151,8 @@ private fun overallComparisonColumnSpec(
             val chipLabel: String =
                 if (data.isOnlyInLeft()) localizedStrings.onlyInLeft else localizedStrings.onlyInRight
             val onlyOneVersionIcon: ImageVector = when (data.isOnlyInLeft()) {
-                true -> AppIconResource.loadXmlImageVector(AppIconResource.icLoadLeftFile)
-                else -> AppIconResource.loadXmlImageVector(AppIconResource.icLoadRightFile)
+                true -> AppIconResource.loadXmlImageVector(AppIconResource.IC_LOAD_LEFT_FILE)
+                else -> AppIconResource.loadXmlImageVector(AppIconResource.IC_LOAD_RIGHT_FILE)
             }
             DiffChip(modifier = Modifier.fillMaxWidth(0.8f),
                 colorPair = diffColors.redPair,
@@ -228,8 +228,8 @@ private fun tooltipForConceptProperty(
     val rightValue = rightConcept?.let(property)
     return when {
         leftValue == null && rightValue == null -> null
-        leftValue != null && rightValue == null -> leftValue.toString()
-        leftValue == null && rightValue != null -> rightValue.toString()
+        leftValue != null && rightValue == null -> leftValue
+        leftValue == null && rightValue != null -> rightValue
         leftValue == rightValue -> leftValue.toString()
         else -> "'$leftValue' vs. '$rightValue'"
     }
