@@ -3,9 +3,9 @@ package terminodiff.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.LeadingIconTab
-import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
+import androidx.compose.material3.LeadingIconTab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -28,10 +28,10 @@ import terminodiff.terminodiff.engine.resources.InputResource
 fun <T : TabItem.ScreenData> Tabs(tabs: List<TabItem<T>>, pagerState: PagerState, localizedStrings: LocalizedStrings) {
     val scope = rememberCoroutineScope()
     TabRow(selectedTabIndex = pagerState.currentPage,
-        backgroundColor = colorScheme.tertiaryContainer,
+        containerColor = colorScheme.tertiaryContainer,
         contentColor = colorScheme.onTertiaryContainer,
         indicator = { tabPositions ->
-            TabRowDefaults.Indicator(Modifier.pagerTabIndicatorOffset(pagerState, tabPositions))
+            TabRowDefaults.SecondaryIndicator(Modifier.pagerTabIndicatorOffset(pagerState, tabPositions))
         }) {
         tabs.forEachIndexed { index, tabItem ->
             LeadingIconTab(

@@ -7,9 +7,10 @@ import androidx.compose.foundation.TooltipPlacement
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.FolderOpen
@@ -52,6 +53,7 @@ class AppIconResource {
         const val IC_LOAD_RIGHT_FILE: ImageRelativePath = "icons/ic-open-right.xml"
         const val IC_RELOAD: ImageRelativePath = "icons/ic-reload.xml"
         const val IC_UNI_LUEBECK: ImageRelativePath = "uzl-logo.xml"
+        const val IC_MARKDOWN_COPY: ImageRelativePath = "icons/markdown_copy_24px.xml"
 
         fun loadFile(relativePath: ImageRelativePath): InputStream? =
             AppIconResource::class.java.classLoader.getResourceAsStream(relativePath)
@@ -69,6 +71,7 @@ class AppIconResource {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TerminoDiffTopAppBar(
     localizedStrings: LocalizedStrings,
@@ -85,98 +88,136 @@ fun TerminoDiffTopAppBar(
 
     var showConceptMapDialog by remember { mutableStateOf(false) }
     if (showConceptMapDialog && conceptMapState != null && diffDataContainer != null) {
-        ConceptMapDialog(diffDataContainer = diffDataContainer,
+        ConceptMapDialog(
+            diffDataContainer = diffDataContainer,
             conceptMapState = conceptMapState,
             localizedStrings = localizedStrings,
             fhirContext = fhirContext,
-            isDarkTheme = useDarkTheme) {
+            isDarkTheme = useDarkTheme
+        ) {
             showConceptMapDialog = false
         }
     }
 
-    TopAppBar(title = {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(modifier = Modifier.padding(end = 16.dp),
-                text = localizedStrings.terminoDiff,
-                color = colorScheme.onPrimaryContainer)
-            AppImageIcon(relativePath = AppIconResource.IC_UNI_LUEBECK,
-                label = localizedStrings.uniLuebeck,
-                tint = colorScheme.onPrimaryContainer,
-                modifier = Modifier.fillMaxHeight(0.8f))
-        }
-    }, backgroundColor = colorScheme.primaryContainer, contentColor = colorScheme.onPrimaryContainer, actions = {
-        val outlinedColors = ButtonDefaults.outlinedButtonColors(containerColor = colorScheme.primaryContainer,
-            contentColor = colorScheme.onPrimaryContainer)
-        val filledColors = ButtonDefaults.buttonColors(containerColor = colorScheme.onPrimaryContainer,
-            contentColor = colorScheme.primaryContainer)
-        val border = BorderStroke(1.dp, colorScheme.onPrimaryContainer)
-        if (diffDataContainer?.codeSystemDiff != null && showGraphButtons) {
-            Row(modifier = Modifier.padding(end = 8.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                OutlinedButton(colors = outlinedColors, border = border, onClick = {
-                    showGraphSwingWindow(codeSystem = diffDataContainer.leftCodeSystem!!,
-                        frameTitle = localizedStrings.showLeftGraphButton,
-                        useDarkTheme = useDarkTheme,
-                        localizedStrings = localizedStrings)
-                }) {
-                    Text(localizedStrings.showLeftGraphButton)
-                }
-
-                Button(colors = filledColors, onClick = {
-                    try {
-                        showDiffGraphSwingWindow(diffGraph = diffDataContainer.codeSystemDiff!!.differenceGraph,
-                            frameTitle = localizedStrings.diffGraph,
+    TopAppBar(
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                Text(
+                    modifier = Modifier.padding(end = 16.dp),
+                    text = localizedStrings.terminoDiff,
+                    color = colorScheme.onPrimaryContainer
+                )
+                AppImageIcon(
+                    relativePath = AppIconResource.IC_UNI_LUEBECK,
+                    label = localizedStrings.uniLuebeck,
+                    tint = colorScheme.onPrimaryContainer,
+                    modifier = Modifier.fillMaxHeight(0.8f)
+                )
+            }
+        },
+        modifier = Modifier.height(48.dp),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = colorScheme.primaryContainer),
+        actions = {
+            val outlinedColors = ButtonDefaults.outlinedButtonColors(
+                containerColor = colorScheme.primaryContainer,
+                contentColor = colorScheme.onPrimaryContainer
+            )
+            val filledColors = ButtonDefaults.buttonColors(
+                containerColor = colorScheme.onPrimaryContainer,
+                contentColor = colorScheme.primaryContainer
+            )
+            val border = BorderStroke(1.dp, colorScheme.onPrimaryContainer)
+            if (diffDataContainer?.codeSystemDiff != null && showGraphButtons) {
+                Row(modifier = Modifier.padding(end = 8.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    OutlinedButton(colors = outlinedColors, border = border, onClick = {
+                        showGraphSwingWindow(
+                            codeSystem = diffDataContainer.leftCodeSystem!!,
+                            frameTitle = localizedStrings.showLeftGraphButton,
                             useDarkTheme = useDarkTheme,
-                            localizedStrings = localizedStrings)
-                    } catch (e: Exception) {
-                        logger.error { e }
-                        Alert(Alert.AlertType.ERROR, localizedStrings.couldNotDisplayGraphWindow_(e), ButtonType.OK).showAndWait()
+                            localizedStrings = localizedStrings
+                        )
+                    }) {
+                        Text(localizedStrings.showLeftGraphButton)
                     }
-                }) {
-                    Text(localizedStrings.diffGraph)
-                }
 
-                Button(onClick = {
-                    showConceptMapDialog = true
-                }, enabled = conceptMapState != null, colors = filledColors) {
-                    Icon(imageVector = Icons.Default.Mediation, contentDescription = localizedStrings.conceptMap)
-                    Text(localizedStrings.conceptMap)
-                }
+                    Button(colors = filledColors, onClick = {
+                        // TODO this is janky if the calculation takes a while, it would be good to have a progress indicator here
+                        try {
+                            showDiffGraphSwingWindow(
+                                diffGraph = diffDataContainer.codeSystemDiff!!.differenceGraph,
+                                frameTitle = localizedStrings.diffGraph,
+                                useDarkTheme = useDarkTheme,
+                                localizedStrings = localizedStrings
+                            )
+                        } catch (e: Exception) {
+                            logger.error { e }
+                            Alert(
+                                Alert.AlertType.ERROR,
+                                localizedStrings.couldNotDisplayGraphWindow_(e),
+                                ButtonType.OK
+                            ).showAndWait()
+                        }
+                    }) {
+                        Text(localizedStrings.diffGraph)
+                    }
 
-                OutlinedButton(colors = outlinedColors, border = border, onClick = {
-                    showGraphSwingWindow(codeSystem = diffDataContainer.rightCodeSystem!!,
-                        frameTitle = localizedStrings.showRightGraphButton,
-                        useDarkTheme = useDarkTheme,
-                        localizedStrings = localizedStrings)
-                }) {
-                    Text(localizedStrings.showRightGraphButton)
+                    Button(onClick = {
+                        showConceptMapDialog = true
+                        // TODO this is janky if the calculation takes a while, it would be good to have a progress indicator here
+                    }, enabled = conceptMapState != null, colors = filledColors) {
+                        Icon(imageVector = Icons.Default.Mediation, contentDescription = localizedStrings.conceptMap)
+                        Text(localizedStrings.conceptMap)
+                    }
+
+                    OutlinedButton(colors = outlinedColors, border = border, onClick = {
+                        showGraphSwingWindow(
+                            codeSystem = diffDataContainer.rightCodeSystem!!,
+                            frameTitle = localizedStrings.showRightGraphButton,
+                            useDarkTheme = useDarkTheme,
+                            localizedStrings = localizedStrings
+                        )
+                    }) {
+                        Text(localizedStrings.showRightGraphButton)
+                    }
                 }
             }
-        }
 
-        MouseOverPopup(localizedStrings.toggleDarkTheme) {
-            IconActionButton(onClick = onChangeDarkTheme,
-                imageVector = if (useDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-                label = localizedStrings.toggleDarkTheme)
-        }
+            MouseOverPopup(localizedStrings.toggleDarkTheme) {
+                IconActionButton(
+                    onClick = onChangeDarkTheme,
+                    imageVector = if (useDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                    label = localizedStrings.toggleDarkTheme
+                )
+            }
 
-        MouseOverPopup(localizedStrings.changeLanguage) {
-            IconActionButton(onClick = onLocaleChange,
-                imageRelativePath = AppIconResource.IC_CHANGE_LANGUAGE,
-                label = localizedStrings.changeLanguage)
-        }
+            MouseOverPopup(localizedStrings.changeLanguage) {
+                IconActionButton(
+                    onClick = onLocaleChange,
+                    imageRelativePath = AppIconResource.IC_CHANGE_LANGUAGE,
+                    label = localizedStrings.changeLanguage
+                )
+            }
 
-        MouseOverPopup(localizedStrings.openResources) {
-            IconActionButton(onClick = onShowLoadScreen,
-                imageVector = Icons.Default.FolderOpen,
-                label = localizedStrings.reload)
-        }
+            MouseOverPopup(localizedStrings.openResources) {
+                IconActionButton(
+                    onClick = onShowLoadScreen,
+                    imageVector = Icons.Default.FolderOpen,
+                    label = localizedStrings.reload
+                )
+            }
 
-        MouseOverPopup(localizedStrings.reload) {
-            IconActionButton(onClick = onReload,
-                imageRelativePath = AppIconResource.IC_RELOAD,
-                label = localizedStrings.reload)
+            MouseOverPopup(localizedStrings.reload) {
+                IconActionButton(
+                    onClick = onReload,
+                    imageRelativePath = AppIconResource.IC_RELOAD,
+                    label = localizedStrings.reload
+                )
+            }
         }
-    })
+    )
 }
 
 @Composable
@@ -213,10 +254,12 @@ fun AppImageIcon(
     modifier: Modifier = Modifier,
 ) {
     AppIconResource.loadFile(relativePath)?.let { iconStream ->
-        Icon(modifier = modifier,
+        Icon(
+            modifier = modifier,
             imageVector = AppIconResource.loadXmlImageVector(iconStream),
             contentDescription = label,
-            tint = tint)
+            tint = tint
+        )
     }
 }
 
@@ -230,14 +273,16 @@ fun MouseOverPopup(
     backgroundColor: Color = colorScheme.tertiaryContainer,
     foregroundColor: Color = colorScheme.onTertiaryContainer,
     content: @Composable () -> Unit,
-) = TooltipArea(tooltip = {
-    Surface(modifier = Modifier.shadow(4.dp), color = backgroundColor, shape = RoundedCornerShape(4.dp)) {
-        Text(text = text, color = foregroundColor, modifier = Modifier.padding(10.dp))
-    }
-},
+) = TooltipArea(
+    tooltip = {
+        Surface(modifier = Modifier.shadow(4.dp), color = backgroundColor, shape = RoundedCornerShape(4.dp)) {
+            Text(text = text, color = foregroundColor, modifier = Modifier.padding(10.dp))
+        }
+    },
     delayMillis = 750,
     tooltipPlacement = TooltipPlacement.CursorPoint(offset = DpOffset(10.dp, 10.dp), alignment = Alignment.BottomEnd),
-    content = content)
+    content = content
+)
 
 
 @OptIn(ExperimentalComposeUiApi::class)

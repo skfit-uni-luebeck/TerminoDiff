@@ -5,8 +5,8 @@ package terminodiff.terminodiff.ui.panes.conceptmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Description
@@ -37,7 +37,6 @@ import terminodiff.engine.resources.DiffDataContainer
 import terminodiff.i18n.LocalizedStrings
 import terminodiff.terminodiff.engine.conceptmap.ConceptMapState
 import terminodiff.terminodiff.engine.conceptmap.TerminodiffConceptMap
-import terminodiff.terminodiff.engine.graph.GraphSide
 import terminodiff.terminodiff.ui.panes.conceptmap.mapping.ConceptMappingEditorContent
 import terminodiff.terminodiff.ui.panes.conceptmap.meta.ConceptMapMetaEditorContent
 import terminodiff.ui.TabItem
@@ -57,7 +56,7 @@ fun ConceptMapDialog(
 ) {
     val pagerState = rememberPagerState()
 
-    val conceptMap: TerminodiffConceptMap? by produceState<TerminodiffConceptMap?>(null,
+    val conceptMap: TerminodiffConceptMap? by produceState(null,
         conceptMapState.hasConceptMap) {
         value = conceptMapState.createConceptMap(diffDataContainer)
     }

@@ -51,6 +51,10 @@ class DiffReportGenerator {
         concept: List<CodeSystem.ConceptDefinitionComponent>
     ) {
         a("### $header")
+        if (subsetCodeList.isEmpty()) {
+            a("**None**")
+            return
+        }
         val codeDisplayMap = concept.filter { it.code in subsetCodeList }.associate { it.code to it.display }.toList()
         drawTable(
             mapOf(
@@ -70,6 +74,10 @@ class DiffReportGenerator {
         getter: CodeSystem.ConceptDefinitionComponent.() -> String?
     ) {
         a("### $header")
+        if (differences.isEmpty()) {
+            a("**None**")
+            return
+        }
 
         val codeList = differences.keys.toList().sorted()
         val leftValues = codeList.map { code ->

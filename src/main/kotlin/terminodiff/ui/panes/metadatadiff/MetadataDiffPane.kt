@@ -6,7 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -47,9 +48,8 @@ fun MetadataDiffPanel(
 
     Card(
         modifier = Modifier.padding(8.dp).fillMaxSize(),
-        elevation = 8.dp,
-        backgroundColor = colorScheme.surfaceVariant,
-        contentColor = colorScheme.onSurfaceVariant
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceVariant, contentColor = colorScheme.onSurfaceVariant),
     ) {
         Column(Modifier.padding(8.dp).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 

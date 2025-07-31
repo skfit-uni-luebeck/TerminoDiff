@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.Search
@@ -218,7 +217,7 @@ private fun <T> ContentRows(
 }
 
 @Composable
-private fun HeaderDivider(cellBorderColor: Color) = Divider(color = cellBorderColor, thickness = 1.dp)
+private fun HeaderDivider(cellBorderColor: Color) = HorizontalDivider(color = cellBorderColor, thickness = 1.dp)
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -474,7 +473,7 @@ fun <TableData, SubList> columnSpecForMultiRow(
         elements.forEachIndexed { index, subList ->
             rowContent(td, subList)
             if (index < elements.size - 1) {
-                Divider(Modifier.fillMaxWidth(0.9f).height(1.dp), color = dividerColor)
+                HorizontalDivider(Modifier.fillMaxWidth(0.9f).height(1.dp), color = dividerColor)
             }
         }
     }

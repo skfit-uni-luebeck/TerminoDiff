@@ -18,6 +18,7 @@ import terminodiff.terminodiff.engine.resources.InputResource
  * we pass around an instance of LocalizedStrings, since we want every composable
  * to recompose when the language changes.
  */
+@Suppress("unused")
 abstract class LocalizedStrings(
     val acceptAll: String,
     val acceptedCount_: (Int) -> String,
@@ -33,6 +34,8 @@ abstract class LocalizedStrings(
     val calculateDiff: String,
     val canonicalUrl: String,
     val caseSensitive: String = "Case-Sensitive?",
+    val codeList: String,
+    val copyCodeList: String,
     val changeLanguage: String,
     val clearSearch: String,
     val clickForDetails: String,
@@ -199,6 +202,7 @@ class GermanStrings : LocalizedStrings(
     closeLoad = "Laden",
     closeSearch = "Suchen",
     closeCancel = "Abbrechen",
+    codeList = "Codeliste",
     comments = "Kommentare",
     comparison = "Vergleich",
     compositional = "Kompositionell?",
@@ -216,6 +220,7 @@ class GermanStrings : LocalizedStrings(
         }
     },
     contact = "Kontakt",
+    copyCodeList = "Codeliste kopieren",
     couldNotDisplayGraphWindow_ = { "Konnte den Graphen nicht anzeigen: ${it.message}" },
     count = "Anzahl",
     date = "Datum",
@@ -401,6 +406,7 @@ class EnglishStrings : LocalizedStrings(
     closeLoad = "Load",
     closeSearch = "Search",
     closeCancel = "Cancel",
+    codeList = "Code list",
     comments = "Comments",
     comparison = "Comparison",
     compositional = "Compositional?",
@@ -420,6 +426,7 @@ class EnglishStrings : LocalizedStrings(
     contact = "Contact",
     couldNotDisplayGraphWindow_ = { "Could not display the graph: ${it.message}" },
     count = "Count",
+    copyCodeList = "Copy code list",
     date = "Date",
     description = "Description",
     designations = "Designations",

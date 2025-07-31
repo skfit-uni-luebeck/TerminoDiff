@@ -2,18 +2,9 @@
 
 package libraries.accompanist.pager_indicators
 
-import libraries.accompanist.pager.PagerState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import libraries.accompanist.pager.ExperimentalPagerApi
+import libraries.accompanist.pager.PagerState
 
 /**
  * A horizontally laid out indicator for a HorizontalPager or VerticalPager, representing
@@ -35,8 +27,7 @@ import libraries.accompanist.pager.ExperimentalPagerApi
  * @param pagerState the state object of your Pager to be used to observe the list's state.
  * @param modifier the modifier to apply to this layout.
  * @param activeColor the color of the active Page indicator
- * @param inactiveColor the color of page indicators that are inactive. This defaults to
- * [activeColor] with the alpha component set to the [ContentAlpha.disabled].
+ * @param inactiveColor the color of page indicators that are inactive.
  * @param indicatorWidth the width of each indicator in [Dp].
  * @param indicatorHeight the height of each indicator in [Dp]. Defaults to [indicatorWidth].
  * @param spacing the spacing between each indicator in [Dp].
@@ -47,8 +38,8 @@ import libraries.accompanist.pager.ExperimentalPagerApi
 fun HorizontalPagerIndicator(
     pagerState: PagerState,
     modifier: Modifier = Modifier,
-    activeColor: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
-    inactiveColor: Color = activeColor.copy(ContentAlpha.disabled),
+    activeColor: Color,
+    inactiveColor: Color,
     indicatorWidth: Dp = 8.dp,
     indicatorHeight: Dp = indicatorWidth,
     spacing: Dp = indicatorWidth,
@@ -104,8 +95,7 @@ fun HorizontalPagerIndicator(
  * @param pagerState the state object of your Pager to be used to observe the list's state.
  * @param modifier the modifier to apply to this layout.
  * @param activeColor the color of the active Page indicator
- * @param inactiveColor the color of page indicators that are inactive. This defaults to
- * [activeColor] with the alpha component set to the [ContentAlpha.disabled].
+ * @param inactiveColor the color of page indicators that are inactive.
  * @param indicatorHeight the height of each indicator in [Dp].
  * @param indicatorWidth the width of each indicator in [Dp]. Defaults to [indicatorHeight].
  * @param spacing the spacing between each indicator in [Dp].
@@ -116,8 +106,8 @@ fun HorizontalPagerIndicator(
 fun VerticalPagerIndicator(
     pagerState: PagerState,
     modifier: Modifier = Modifier,
-    activeColor: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
-    inactiveColor: Color = activeColor.copy(ContentAlpha.disabled),
+    activeColor: Color,
+    inactiveColor: Color,
     indicatorHeight: Dp = 8.dp,
     indicatorWidth: Dp = indicatorHeight,
     spacing: Dp = indicatorHeight,

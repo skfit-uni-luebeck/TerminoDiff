@@ -3,14 +3,16 @@ package terminodiff.ui.panes.conceptdiff
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,9 +27,12 @@ import terminodiff.engine.graph.CodeSystemGraphBuilder
 import terminodiff.engine.graph.FhirConceptDetails
 import terminodiff.engine.resources.DiffDataContainer
 import terminodiff.i18n.LocalizedStrings
+import terminodiff.terminodiff.report.ConceptListJsonGenerator
 import terminodiff.terminodiff.report.DiffReportGenerator
 import terminodiff.terminodiff.ui.panes.conceptdiff.display.DisplayDetailsDialog
 import terminodiff.terminodiff.ui.panes.conceptdiff.propertydesignation.PropertyDesignationDialog
+import terminodiff.terminodiff.ui.util.TerminodiffDialog
+import terminodiff.ui.AppIconResource
 import terminodiff.ui.panes.conceptmap.showRoCodeViewer
 import terminodiff.ui.theme.DiffColors
 import terminodiff.ui.theme.getDiffColors
@@ -102,6 +107,10 @@ fun ConceptDiffPanel(
 
     val markdownDialogData: MutableState<String?> = remember {
         mutableStateOf(null)
+
+    }
+    val codeListDialogData: MutableState<String?> = remember {
+        mutableStateOf(null)
     }
 
     if (markdownDialogData.value != null) {
@@ -110,13 +119,24 @@ fun ConceptDiffPanel(
             localizedStrings = localizedStrings,
             isDarkTheme = useDarkTheme,
         )
+        markdownDialogData.value = null
+    }
+
+    if (codeListDialogData.value != null) {
+        CodeListDialog(
+            codeListDialogData.value!!,
+            localizedStrings = localizedStrings,
+            onDismiss = { codeListDialogData.value = null }
+        )
     }
 
     Card(
         modifier = Modifier.padding(8.dp).fillMaxSize(),
-        elevation = 8.dp,
-        backgroundColor = colorScheme.surfaceVariant,
-        contentColor = colorScheme.onSurfaceVariant,
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = colorScheme.surfaceVariant,
+            contentColor = colorScheme.onSurfaceVariant
+        ),
     ) {
         Column(Modifier.padding(4.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(localizedStrings.conceptDiff, style = MaterialTheme.typography.headlineSmall)
@@ -129,13 +149,30 @@ fun ConceptDiffPanel(
                         lazyListState.scrollToItem(0)
                     }
                 }
-                IconButton(onClick = {
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedButton(onClick = {
+                    codeListDialogData.value = ConceptListJsonGenerator().generateCodeListJson(
+                        chipFilteredTableData
+                    )
+                }) {
+                    Icon(Icons.Default.ContentCopy, null)
+                    Text(localizedStrings.copyCodeList)
+                }
+                OutlinedButton(onClick = {
                     markdownDialogData.value = DiffReportGenerator().generateDiffReport(
                         diffDataContainer = diffDataContainer
                     )
                 }) {
-                    Icon(Icons.Default.ContentCopy, null)
+                    val icon = AppIconResource.loadXmlImageVector(AppIconResource.IC_MARKDOWN_COPY)
+                    Icon(icon, null)
+                    Text(localizedStrings.markdown)
                 }
+
             }
 
             DiffDataTable(
@@ -198,7 +235,6 @@ fun filterDiffItems(diffDataContainer: DiffDataContainer, activeFilter: String):
 
 }
 
-@Composable
 fun MarkdownDialog(value: String, localizedStrings: LocalizedStrings, isDarkTheme: Boolean) {
     showRoCodeViewer(
         codeText = value,
@@ -208,6 +244,22 @@ fun MarkdownDialog(value: String, localizedStrings: LocalizedStrings, isDarkThem
         rows = 120,
         columns = 200
     )
+}
+
+@Composable
+fun CodeListDialog(value: String, localizedStrings: LocalizedStrings, onDismiss: () -> Unit) {
+    TerminodiffDialog(
+        title = localizedStrings.codeList,
+        onCloseRequest = onDismiss
+    ) {
+        TextField(
+            value = value,
+            readOnly = true,
+            onValueChange = {},
+            singleLine = false,
+            modifier = Modifier.fillMaxSize().padding(8.dp)
+        )
+    }
 }
 
 data class TableData(

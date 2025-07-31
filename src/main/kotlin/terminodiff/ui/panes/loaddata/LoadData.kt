@@ -5,17 +5,15 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fireplace
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -63,31 +61,42 @@ fun ColumnScope.LoadedResourcesCard(
     leftResource: InputResource?,
     rightResource: InputResource?,
     onGoButtonClick: () -> Unit,
-) = Card(modifier = Modifier.padding(8.dp).fillMaxWidth().weight(0.25f),
-    backgroundColor = colorScheme.surfaceVariant,
-    contentColor = colorScheme.onSurfaceVariant) {
-    Column(Modifier.padding(4.dp).fillMaxSize(),
+) = Card(
+    modifier = Modifier.padding(8.dp).fillMaxWidth().weight(0.25f),
+    colors = CardDefaults.cardColors(
+        containerColor = colorScheme.surfaceVariant,
+        contentColor = colorScheme.onSurfaceVariant
+    ),
+) {
+    Column(
+        Modifier.padding(4.dp).fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top) {
+        verticalArrangement = Arrangement.Top
+    ) {
         Row(Modifier.height(IntrinsicSize.Min)) {
             when {
                 leftResource != null && rightResource != null -> {
-                    ElevatedButton(modifier = Modifier.weight(0.3f),
+                    ElevatedButton(
+                        modifier = Modifier.weight(0.3f),
                         onClick = onGoButtonClick,
-                        colors = ButtonDefaults.buttonColors(colorScheme.primary, colorScheme.onPrimary)) {
+                        colors = ButtonDefaults.buttonColors(colorScheme.primary, colorScheme.onPrimary)
+                    ) {
                         Text(localizedStrings.calculateDiff)
                     }
                 }
+
                 else -> {
                     Text(text = localizedStrings.loadedResources, style = typography.titleLarge)
                 }
             }
         }
 
-        Row(modifier = Modifier.padding(4.dp).fillMaxWidth().weight(0.7f),
-            horizontalArrangement = Arrangement.SpaceAround) {
+        Row(
+            modifier = Modifier.padding(4.dp).fillMaxWidth().weight(0.7f),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
             ResourceDescription(Modifier.weight(0.45f), localizedStrings, leftResource, DiffDataContainer.Side.LEFT)
-            Divider(color = colorScheme.secondary, modifier = Modifier.width(2.dp).fillMaxHeight())
+            VerticalDivider(color = colorScheme.secondary, modifier = Modifier.width(2.dp).fillMaxHeight())
             ResourceDescription(Modifier.weight(0.45f), localizedStrings, rightResource, DiffDataContainer.Side.RIGHT)
         }
     }
@@ -104,35 +113,42 @@ fun ResourceDescription(
     Text(text = localizedStrings.side_(side), style = typography.titleMedium, textDecoration = TextDecoration.Underline)
     Row(modifier = Modifier.align(Alignment.CenterHorizontally).height(IntrinsicSize.Min)) {
         SelectionContainer {
-            Text(text = text,
+            Text(
+                text = text,
                 textAlign = TextAlign.Center,
                 style = typography.bodyMedium,
                 maxLines = 3,
                 softWrap = true,
-                overflow = TextOverflow.Clip)
+                overflow = TextOverflow.Clip
+            )
         }
     }
 }
 
 private fun formatText(resource: InputResource?, localizedStrings: LocalizedStrings) =
     buildAnnotatedString {
-        append(when {
-            resource == null -> AnnotatedString(localizedStrings.noDataLoaded)
-            resource.kind == Kind.FILE -> {
-                val path = resource.localFile!!.canonicalFile.invariantSeparatorsPath
-                localizedStrings.fileFromPath_.invoke(path)
+        append(
+            when {
+                resource == null -> AnnotatedString(localizedStrings.noDataLoaded)
+                resource.kind == Kind.FILE -> {
+                    val path = resource.localFile!!.canonicalFile.invariantSeparatorsPath
+                    localizedStrings.fileFromPath_.invoke(path)
+                }
+
+                resource.kind == Kind.FHIR_SERVER -> {
+                    val url = resource.resourceUrl!!
+                    localizedStrings.fileFromUrl_.invoke(url)
+                }
+
+                resource.kind == Kind.VREAD -> {
+                    val url = resource.resourceUrl!!
+                    val metaVersion = resource.downloadableCodeSystem!!.metaVersion
+                    localizedStrings.vreadFromUrlAndMetaVersion_.invoke(url, metaVersion!!)
+                }
+
+                else -> AnnotatedString("")
             }
-            resource.kind == Kind.FHIR_SERVER -> {
-                val url = resource.resourceUrl!!
-                localizedStrings.fileFromUrl_.invoke(url)
-            }
-            resource.kind == Kind.VREAD -> {
-                val url = resource.resourceUrl!!
-                val metaVersion = resource.downloadableCodeSystem!!.metaVersion
-                localizedStrings.vreadFromUrlAndMetaVersion_.invoke(url, metaVersion!!)
-            }
-            else -> AnnotatedString("")
-        })
+        )
     }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -142,16 +158,23 @@ fun ColumnScope.LoadResourcesCards(
     onLoadRight: LoadListener,
     localizedStrings: LocalizedStrings,
     fhirContext: FhirContext,
-) = Card(modifier = Modifier.padding(8.dp).fillMaxWidth().weight(0.75f, true),
-    backgroundColor = colorScheme.surfaceVariant) {
+) = Card(
+    modifier = Modifier.padding(8.dp).fillMaxWidth().weight(0.75f, true),
+    colors = CardDefaults.cardColors(
+        containerColor = colorScheme.surfaceVariant,
+        contentColor = colorScheme.onSurfaceVariant
+    ),
+) {
     val tabs = listOf(LoadFilesTabItem.FromFile, LoadFilesTabItem.FromTerminologyServer)
     val pagerState = rememberPagerState()
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Tabs(tabs = tabs, pagerState = pagerState, localizedStrings = localizedStrings)
-        TabsContent(tabs = tabs,
+        TabsContent(
+            tabs = tabs,
             pagerState = pagerState,
             localizedStrings = localizedStrings,
-            fhirContext = fhirContext) { LoadFilesTabItem.LoadFilesScreenData(onLoadLeft, onLoadRight) }
+            fhirContext = fhirContext
+        ) { LoadFilesTabItem.LoadFilesScreenData(onLoadLeft, onLoadRight) }
     }
 }
 
@@ -165,7 +188,8 @@ sealed class LoadFilesTabItem(
         FromFileScreenWrapper(strings, data.onLoadLeft, data.onLoadRight)
     })
 
-    object FromTerminologyServer : LoadFilesTabItem(icon = Icons.Default.Fireplace,
+    object FromTerminologyServer : LoadFilesTabItem(
+        icon = Icons.Default.Fireplace,
         title = { fhirTerminologyServer },
         screen = { strings, fhirContext, data ->
             FromServerScreenWrapper(strings, data.onLoadLeft, data.onLoadRight, fhirContext)

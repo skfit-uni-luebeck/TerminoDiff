@@ -1,8 +1,9 @@
 package terminodiff.terminodiff.ui.panes.conceptdiff.display
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.TextField
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.TextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -42,14 +43,16 @@ fun DisplayDetailsDialog(
         if (data.leftDetails != null) CardForDisplay(data.leftDetails, localizedStrings.leftValue, dataGetter)
         if (data.isInBoth()) {
             val result =
-                data.diff!!.conceptComparison.find { it.diffItem.label.invoke(localizedStrings) == label } ?: return@TerminodiffDialog
+                data.diff!!.conceptComparison.find { it.diffItem.label.invoke(localizedStrings) == label }
+                    ?: return@TerminodiffDialog
             val (background, foreground) = colorPairForConceptDiffResult(result, diffColors)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 DiffChip(
                     Modifier.fillMaxWidth(0.5f).height(50.dp),
                     text = localizedStrings.conceptDiffResults_.invoke(result.result),
                     backgroundColor = background,
-                    textColor = foreground)
+                    textColor = foreground
+                )
             }
         }
         if (data.rightDetails != null) CardForDisplay(data.rightDetails, localizedStrings.rightValue, dataGetter)
@@ -62,19 +65,29 @@ private fun CardForDisplay(
     title: String,
     dataGetter: (FhirConceptDetails) -> String?,
 ) =
-    Card(modifier = Modifier.padding(4.dp).fillMaxWidth(),
-        backgroundColor = colorScheme.secondaryContainer,
-        contentColor = colorScheme.onSecondaryContainer) {
-        Column(modifier = Modifier.padding(8.dp),
+    Card(
+        modifier = Modifier.padding(4.dp).fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = colorScheme.surfaceVariant,
+            contentColor = colorScheme.onSurfaceVariant
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = title,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = colorScheme.onSecondaryContainer)
+                color = colorScheme.onSecondaryContainer
+            )
             val text = dataGetter.invoke(fhirConceptDetails)
-            TextField(modifier = Modifier.fillMaxWidth(0.9f),
+            TextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = text ?: "",
                 onValueChange = {},
-                readOnly = true)
+                readOnly = true
+            )
         }
     }

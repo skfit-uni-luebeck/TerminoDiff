@@ -43,7 +43,8 @@ fun TerminodiffAppContent(
     val splitPaneState = rememberSplitPaneState(initialPositionPercentage = 0.7f)
     val scrollState = rememberScrollState()
 
-    TerminodiffContentWindow(localizedStrings = localizedStrings,
+    TerminodiffContentWindow(
+        localizedStrings = localizedStrings,
         scrollState = scrollState,
         useDarkTheme = useDarkTheme,
         onLocaleChange = onLocaleChange,
@@ -54,7 +55,8 @@ fun TerminodiffAppContent(
         onReload = { diffDataContainer.reload() },
         diffDataContainer = diffDataContainer,
         splitPaneState = splitPaneState,
-        showDiff = showDiff) { newValue -> showDiff = newValue }
+        showDiff = showDiff
+    ) { newValue -> showDiff = newValue }
 }
 
 @OptIn(ExperimentalSplitPaneApi::class, ExperimentalMaterial3Api::class)
@@ -74,9 +76,11 @@ fun TerminodiffContentWindow(
     showDiff: Boolean,
     setShowDiff: (Boolean) -> Unit,
 ) {
-    val conceptMapState by produceState<ConceptMapState?>(null,
+    val conceptMapState by produceState<ConceptMapState?>(
+        null,
         diffDataContainer.loadState,
-        diffDataContainer.codeSystemDiff) {
+        diffDataContainer.codeSystemDiff
+    ) {
         if (diffDataContainer.codeSystemDiff != null) {
             value = ConceptMapState()
         }
@@ -84,10 +88,17 @@ fun TerminodiffContentWindow(
     val isReady by derivedStateOf {
         diffDataContainer.leftCodeSystem != null && diffDataContainer.rightCodeSystem != null && showDiff
     }
+    /* TODO loading the data is currently quite janky. It would be nice to have a change to
+    *   a new screen as soon as the "Calculate Diff" button is clicked with a indeterminate progress indicator
+    *   that gives string feedback below the indicator while a coroutine is loading the diff data.
+    *   Once the data is loaded, there can be a smooth transition to the diff screen.
+    *  */
+
     Crossfade(useDarkTheme) { darkTheme ->
         TerminoDiffTheme(useDarkTheme = darkTheme) {
             Scaffold(topBar = {
-                TerminoDiffTopAppBar(localizedStrings = localizedStrings,
+                TerminoDiffTopAppBar(
+                    localizedStrings = localizedStrings,
                     diffDataContainer = diffDataContainer,
                     conceptMapState = conceptMapState,
                     fhirContext = fhirContext,
@@ -102,12 +113,15 @@ fun TerminodiffContentWindow(
             }, containerColor = MaterialTheme.colorScheme.background) { scaffoldPadding ->
                 Crossfade(isReady) {
                     when (it) {
-                        true -> DiffPaneContent(modifier = Modifier.padding(scaffoldPadding),
+                        true -> DiffPaneContent(
+                            modifier = Modifier.padding(scaffoldPadding),
                             strings = localizedStrings,
                             useDarkTheme = darkTheme,
                             localizedStrings = localizedStrings,
                             diffDataContainer = diffDataContainer,
-                            splitPaneState = splitPaneState)
+                            splitPaneState = splitPaneState
+                        )
+
                         false -> LoadDataPaneContent(
                             modifier = Modifier.padding(scaffoldPadding),
                             scrollState = scrollState,
