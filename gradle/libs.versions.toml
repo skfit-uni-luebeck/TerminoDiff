@@ -1,6 +1,6 @@
 [versions]
 appdirs = "2.0.0"
-caUhnHapiFhir = "8.2.1"
+caUhnHapiFhir = "8.4.0"
 colormap = "0.9.511"
 composeDesktop = "1.8.2"
 composeDesktopIcons = "1.7.3"
