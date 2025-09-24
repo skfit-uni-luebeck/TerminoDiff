@@ -59,4 +59,4 @@ compose = { id = "org.jetbrains.compose", version.ref = "composeDesktop" }
 javafxplugin = { id = "org.openjfx.javafxplugin", version = "0.1.0" }
 kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-versions = { id = "com.github.ben-manes.versions", version = "0.52.0" }
+versions = { id = "com.github.ben-manes.versions", version = "0.53.0" }
