@@ -2,7 +2,7 @@
 appdirs = "2.0.0"
 caUhnHapiFhir = "8.4.0"
 colormap = "0.9.511"
-composeDesktop = "1.8.2"
+composeDesktop = "1.10.2"
 composeDesktopIcons = "1.7.3"
 flatlaf = "3.6.1"
 fuzzywuzzy = "1.4.0"
