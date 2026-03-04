@@ -26,11 +26,11 @@ We queried the following sources:
 
 Our inclusion and exclusion criteria are:
 
-|Inclusion|Exclusion|
-|-|-|
-|Does the approach consider HL7 FHIR resources?|No free-text available|
-|Does the approach consider terminological artefacts?|The approach does not consider terminological/ontological artefacts|
-|The approach computes a diff|The approach is not from the medical domain|
+| Inclusion                                            | Exclusion                                                           |
+|------------------------------------------------------|---------------------------------------------------------------------|
+| Does the approach consider HL7 FHIR resources?       | No free-text available                                              |
+| Does the approach consider terminological artefacts? | The approach does not consider terminological/ontological artefacts |
+| The approach computes a diff                         | The approach is not from the medical domain                         |
 
 By querying the three sources using the search string, and adding references to the "other" category, we selected 25 studies in total (Scopus 12, Springer Link 4, PubMed 3, other 6), based on their abstracts.
 
