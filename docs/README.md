@@ -218,7 +218,7 @@ We utilize the following libraries alongside *Compose*:
 ### Localization
 
 The localization framework was built from scratch in the
-file [LocalizedStrings.kt](../src/main/kotlin/terminodiff/i18n/LocalizedStrings.kt), since no suitable alternative for
+file [LocalizedStrings.kt](../src/jvmMain/kotlin/terminodiff/i18n/LocalizedStrings.kt), since no suitable alternative for
 localization in Kotlin could be found. Currently, we support English (default) and German strings. Every component that
 displays strings receives an instance of `LocalizedStrings`, which declares a number of properties that are implemented
 in `EnglishStrings` and `GermanStrings`. Default arguments in `LocalizesStrings` represent strings that are identical in
@@ -254,7 +254,7 @@ operations, [explained in more detail in the documentation](https://github.com/t
 
 We have implemented a very generic difference engine for the metadata table, so that new diff items can be added very
 easily. Most elements are basically string comparisons, which can be added using a single line of code
-in [MetadataDiffItems.kt](../src/main/kotlin/terminodiff/engine/metadata/MetadataDiff.kt) (
+in [MetadataDiffItems.kt](../src/jvmMain/kotlin/terminodiff/engine/metadata/MetadataDiff.kt) (
 function `generateComparisonDefinitions`). Stuff like `identifiers` are a bit more involved, since these require the
 definition of a key and a string representation of the value, as well as column definitions for the key columns (to
 render the details dialog shown above), but are also not very challenging to implement.

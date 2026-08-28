@@ -1,0 +1,140 @@
+package terminodiff.shared.ui
+
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import ca.uhn.fhir.context.FhirContext
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.SplitPaneState
+import org.jetbrains.compose.splitpane.rememberSplitPaneState
+import terminodiff.shared.engine.resources.DiffDataContainer
+import terminodiff.shared.i18n.LocalizedStrings
+import terminodiff.shared.engine.conceptmap.ConceptMapState
+import terminodiff.shared.engine.resources.InputResource
+import terminodiff.shared.ui.panes.diff.DiffPaneContent
+import terminodiff.shared.ui.panes.loaddata.LoadDataPaneContent
+import terminodiff.shared.ui.theme.TerminoDiffTheme
+
+@OptIn(ExperimentalSplitPaneApi::class)
+@Composable
+fun TerminodiffAppContent(
+    localizedStrings: LocalizedStrings,
+    diffDataContainer: DiffDataContainer,
+    fhirContext: FhirContext,
+    useDarkTheme: Boolean,
+    onLocaleChange: () -> Unit,
+    onChangeDarkTheme: () -> Unit
+) {
+    var showDiff by remember { mutableStateOf(false) }
+    val onLoadLeftFile: (InputResource) -> Unit = {
+        diffDataContainer.leftResource = it
+    }
+    val onLoadRightFile: (InputResource) -> Unit = {
+        diffDataContainer.rightResource = it
+    }
+
+    val splitPaneState = rememberSplitPaneState(initialPositionPercentage = 0.7f)
+    val scrollState = rememberScrollState()
+
+    TerminodiffContentWindow(
+        localizedStrings = localizedStrings,
+        scrollState = scrollState,
+        useDarkTheme = useDarkTheme,
+        onLocaleChange = onLocaleChange,
+        onChangeDarkTheme = onChangeDarkTheme,
+        fhirContext = fhirContext,
+        onLoadLeft = onLoadLeftFile,
+        onLoadRight = onLoadRightFile,
+        onReload = { diffDataContainer.reload() },
+        diffDataContainer = diffDataContainer,
+        splitPaneState = splitPaneState,
+        showDiff = showDiff
+    ) { newValue -> showDiff = newValue }
+}
+
+@OptIn(ExperimentalSplitPaneApi::class)
+@Composable
+fun TerminodiffContentWindow(
+    localizedStrings: LocalizedStrings,
+    scrollState: ScrollState,
+    useDarkTheme: Boolean,
+    onLocaleChange: () -> Unit,
+    onChangeDarkTheme: () -> Unit,
+    fhirContext: FhirContext,
+    onLoadLeft: (InputResource) -> Unit,
+    onLoadRight: (InputResource) -> Unit,
+    onReload: () -> Unit,
+    diffDataContainer: DiffDataContainer,
+    splitPaneState: SplitPaneState,
+    showDiff: Boolean,
+    setShowDiff: (Boolean) -> Unit,
+) {
+    val conceptMapState by produceState<ConceptMapState?>(
+        null,
+        diffDataContainer.loadState,
+        diffDataContainer.codeSystemDiff
+    ) {
+        if (diffDataContainer.codeSystemDiff != null) {
+            value = ConceptMapState()
+        }
+    }
+    val isReady by derivedStateOf {
+        diffDataContainer.leftCodeSystem != null && diffDataContainer.rightCodeSystem != null && showDiff
+    }
+    /* TODO loading the data is currently quite janky. It would be nice to have a change to
+    *   a new screen as soon as the "Calculate Diff" button is clicked with a indeterminate progress indicator
+    *   that gives string feedback below the indicator while a coroutine is loading the diff data.
+    *   Once the data is loaded, there can be a smooth transition to the diff screen.
+    *  */
+
+    Crossfade(useDarkTheme) { darkTheme ->
+        TerminoDiffTheme(useDarkTheme = darkTheme) {
+            Scaffold(topBar = {
+                TerminoDiffTopAppBar(
+                    localizedStrings = localizedStrings,
+                    diffDataContainer = diffDataContainer,
+                    conceptMapState = conceptMapState,
+                    fhirContext = fhirContext,
+                    showGraphButtons = isReady,
+                    useDarkTheme = useDarkTheme,
+                    onLocaleChange = onLocaleChange,
+                    onChangeDarkTheme = onChangeDarkTheme,
+                    onReload = onReload,
+                    onShowLoadScreen = {
+                        setShowDiff.invoke(false)
+                    })
+            }, containerColor = MaterialTheme.colorScheme.background) { scaffoldPadding ->
+                Crossfade(isReady) {
+                    when (it) {
+                        true -> DiffPaneContent(
+                            modifier = Modifier.padding(scaffoldPadding),
+                            strings = localizedStrings,
+                            useDarkTheme = darkTheme,
+                            localizedStrings = localizedStrings,
+                            diffDataContainer = diffDataContainer,
+                            splitPaneState = splitPaneState
+                        )
+
+                        false -> LoadDataPaneContent(
+                            modifier = Modifier.padding(scaffoldPadding),
+                            scrollState = scrollState,
+                            localizedStrings = localizedStrings,
+                            leftResource = diffDataContainer.leftResource,
+                            rightResource = diffDataContainer.rightResource,
+                            onLoadLeft = onLoadLeft,
+                            onLoadRight = onLoadRight,
+                            fhirContext = fhirContext,
+                            onGoButtonClick = { setShowDiff.invoke(true) },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+

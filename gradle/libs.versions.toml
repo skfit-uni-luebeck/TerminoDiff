@@ -2,10 +2,12 @@
 appdirs = "2.0.0"
 caUhnHapiFhir = "8.8.0"
 colormap = "0.9.511"
-composeDesktop = "1.10.2"
-composeDesktopIcons = "1.7.3"
 flatlaf = "3.7"
+composeMultiplatform = "1.12.0"
+androidx-lifecycle = "2.11.0-beta01"
+material3 = "1.11.0-alpha07"
 fuzzywuzzy = "1.4.0"
+materialIconsExtended = "1.7.8"
 javaxXmlBind = "2.4.0-b180830.0359"
 jgrapht = "1.5.2"
 jungraphT = "1.4"
@@ -15,7 +17,7 @@ ktor = "3.4.1"
 nativeJFileChooser = "1.6.4"
 orgApacheCommons = "3.20.0"
 orgApacheJena = "6.0.0"
-orgApacheLoggingLog4j = "2.25.3"
+orgApacheLoggingLog4j = "2.26.1"
 orgApacheLoggingLog4jApiKotlin = "1.5.0"
 orgSlf4j = "2.0.17"
 rsyntaxtextarea = "3.6.2"
@@ -43,11 +45,17 @@ org-apache-logging-log4j-api-kotlin = { module = "org.apache.logging.log4j:log4j
 org-apache-logging-log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "orgApacheLoggingLog4j" }
 org-apache-logging-log4j-layout-template-json = { module = "org.apache.logging.log4j:log4j-layout-template-json", version.ref = "orgApacheLoggingLog4j" }
 org-apache-logging-log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "orgApacheLoggingLog4j" }
-org-jetbrains-compose-components-splitpane = { module = "org.jetbrains.compose.components:components-splitpane", version.ref = "composeDesktop" }
-org-jetbrains-compose-material-icons-core-desktop = { module = "org.jetbrains.compose.material:material-icons-core-desktop", version.ref = "composeDesktopIcons" }
-org-jetbrains-compose-material-icons-extended-desktop = { module = "org.jetbrains.compose.material:material-icons-extended-desktop", version.ref = "composeDesktopIcons" }
-org-jetbrains-compose-material3-desktop = { module = "org.jetbrains.compose.material3:material3-desktop", version.ref = "composeDesktop" }
-org-jetbrains-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeDesktop" }
+androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources-desktop", version.ref = "composeMultiplatform" }
+compose-components-splitpane = { module = "org.jetbrains.compose.components:components-splitpane-desktop", version.ref = "composeMultiplatform"}
+material-icons-extended = { module = "androidx.compose.material:material-icons-extended-desktop", version.ref="materialIconsExtended"}
+
+compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 org-jetbrains-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 org-jetbrains-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 org-jgrapht-core = { module = "org.jgrapht:jgrapht-core", version.ref = "jgrapht" }
@@ -55,8 +63,9 @@ org-jgrapht-ext = { module = "org.jgrapht:jgrapht-ext", version.ref = "jgrapht" 
 org-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "orgSlf4j" }
 
 [plugins]
-compose = { id = "org.jetbrains.compose", version.ref = "composeDesktop" }
 javafxplugin = { id = "org.openjfx.javafxplugin", version = "0.1.0" }
-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 versions = { id = "com.github.ben-manes.versions", version = "0.53.0" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

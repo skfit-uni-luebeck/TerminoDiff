@@ -1,0 +1,64 @@
+package terminodiff.shared.ui.theme
+
+import androidx.compose.material3.ButtonColors
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+
+val md_theme_light_primary = Color(0xFF00677c)
+val md_theme_light_onPrimary = Color(0xFFffffff)
+val md_theme_light_primaryContainer = Color(0xFFacecff)
+val md_theme_light_onPrimaryContainer = Color(0xFF001f27)
+val md_theme_light_secondary = Color(0xFF4b6269)
+val md_theme_light_onSecondary = Color(0xFFffffff)
+val md_theme_light_secondaryContainer = Color(0xFFcfe7f0)
+val md_theme_light_onSecondaryContainer = Color(0xFF061e25)
+val md_theme_light_tertiary = Color(0xFF575c7d)
+val md_theme_light_onTertiary = Color(0xFFffffff)
+val md_theme_light_tertiaryContainer = Color(0xFFdde0ff)
+val md_theme_light_onTertiaryContainer = Color(0xFF141936)
+val md_theme_light_error = Color(0xFFba1b1b)
+val md_theme_light_errorContainer = Color(0xFFffdad4)
+val md_theme_light_onError = Color(0xFFffffff)
+val md_theme_light_onErrorContainer = Color(0xFF410001)
+val md_theme_light_inverseOnSurface = Color(0xFFeff1f2)
+val md_theme_light_inverseSurface = Color(0xFF2e3132)
+val md_theme_light_inversePrimary = Color(0xFF57d6f6)
+
+val md_theme_dark_primary = Color(0xFF57d6f6)
+val md_theme_dark_onPrimary = Color(0xFF003642)
+val md_theme_dark_primaryContainer = Color(0xFF004e5e)
+val md_theme_dark_onPrimaryContainer = Color(0xFFacecff)
+val md_theme_dark_secondary = Color(0xFFb3cbd3)
+val md_theme_dark_onSecondary = Color(0xFF1d343b)
+val md_theme_dark_secondaryContainer = Color(0xFF344a51)
+val md_theme_dark_onSecondaryContainer = Color(0xFFcfe7f0)
+val md_theme_dark_tertiary = Color(0xFFc0c4ea)
+val md_theme_dark_onTertiary = Color(0xFF292e4d)
+val md_theme_dark_tertiaryContainer = Color(0xFF404565)
+val md_theme_dark_onTertiaryContainer = Color(0xFFdde0ff)
+val md_theme_dark_error = Color(0xFFffb4a9)
+val md_theme_dark_errorContainer = Color(0xFF930006)
+val md_theme_dark_onError = Color(0xFF680003)
+val md_theme_dark_onErrorContainer = Color(0xFFffdad4)
+val md_theme_dark_inverseOnSurface = Color(0xFF191c1d)
+val md_theme_dark_inverseSurface = Color(0xFFe1e3e4)
+val md_theme_dark_inversePrimary = Color(0xFF00677c)
+
+@Suppress("unused")
+val seed = Color(0xFF004b5a)
+val error = Color(0xFFba1b1b)
+val customOrange = Color(0xFFEC7404)
+val customYellow = Color(0xFFFABB00)
+val customGreen = Color(0xFF95BC0E)
+
+@Composable
+fun ButtonColors.contentColor(enabled: Boolean): Color = when (enabled) {
+    true -> this.contentColor
+    else -> this.disabledContentColor
+}
+
+@Composable
+fun ButtonColors.containerColor(enabled: Boolean): Color = when (enabled) {
+    true -> this.containerColor
+    else -> this.disabledContainerColor
+}
