@@ -21,15 +21,9 @@ val appDirs by lazy {
     }
 }
 
-val resourcesDir = System.getProperty("compose.application.resources.dir")?.let { path ->
-    // this only works in the native distribution, (this includes when using `runDistributable` in Gradle/IntelliJ)
-    // otherwise, resourcesDir will be `null`
-    File(path)
-}
-
 fun main() = application {
     configureFileLogging()
-    AppWindow(this, resourcesDir)
+    AppWindow(this)
 }
 
 fun configureFileLogging() {

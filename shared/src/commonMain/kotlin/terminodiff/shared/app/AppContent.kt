@@ -52,10 +52,11 @@ fun LocalizedContent() {
     )
 }
 
+class AppContentIcon
+
 @Composable
 fun AppWindow(
     applicationScope: ApplicationScope,
-    resourcesDir: File? = null,
 ) {
     FlatDarkLaf.setup()
 
@@ -64,8 +65,8 @@ fun AppWindow(
         state = WindowState(size = DpSize(1366.dp, 768.dp), position = WindowPosition(Alignment.Center))
     ) {
         this.window.title = "TerminoDiff"
-        resourcesDir?.let {
-            this.window.iconImage = ImageIO.read(it.resolve("terminodiff@0.5x.png"))
+        AppContentIcon::class.java.classLoader.getResourceAsStream("terminodiff@0.5x.png").use {
+            this.window.iconImage = ImageIO.read(it)
         }
         UIManager.setLookAndFeel(FlatDarkLaf())
         LocalizedContent()
