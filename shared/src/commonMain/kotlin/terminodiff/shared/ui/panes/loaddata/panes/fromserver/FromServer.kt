@@ -33,6 +33,8 @@ import terminodiff.shared.ui.icons.icon_cancel
 import terminodiff.shared.ui.icons.icon_check_circle
 import terminodiff.shared.ui.icons.icon_difference
 import terminodiff.shared.ui.icons.icon_pending
+import terminodiff.shared.ui.icons.icon_splitscreen_left
+import terminodiff.shared.ui.icons.icon_splitscreen_right
 import terminodiff.shared.ui.theme.contentColor
 import terminodiff.shared.ui.util.ColumnSpec
 import terminodiff.shared.ui.util.LazyTable
@@ -257,12 +259,12 @@ fun ListOfResources(
     }
 
     @Composable
-    fun leftRightButton(text: String, iconPath: ImageRelativePath, onLoadFile: (InputResource) -> Unit) = LoadButton(
+    fun leftRightButton(text: String, imageVector: ImageVector, onLoadFile: (InputResource) -> Unit) = LoadButton(
         text = text,
         selectedItem = selectedItem,
         baseServerUrl = baseServerUrl,
         enabled = selectedItem != null && (!isDownloadingCurrently),
-        iconImageVector = AppIconResource.loadXmlImageVector(iconPath)
+        iconImageVector = imageVector
     ) {
         isDownloadingCurrently = true
         coroutineScope.launch {
@@ -275,7 +277,7 @@ fun ListOfResources(
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
         leftRightButton(
             text = localizedStrings.loadLeft,
-            iconPath = AppIconResource.IC_LOAD_LEFT_FILE,
+            imageVector = icon_splitscreen_left,
             onLoadFile = onLoadLeftFile
         )
 
@@ -292,7 +294,7 @@ fun ListOfResources(
 
         leftRightButton(
             text = localizedStrings.loadRight,
-            iconPath = AppIconResource.IC_LOAD_RIGHT_FILE,
+            imageVector = icon_splitscreen_right,
             onLoadFile = onLoadRightFile
         )
     }

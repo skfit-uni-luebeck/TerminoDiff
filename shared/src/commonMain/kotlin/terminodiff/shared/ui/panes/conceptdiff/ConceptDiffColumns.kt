@@ -24,6 +24,8 @@ import terminodiff.shared.ui.util.SelectableText
 import terminodiff.shared.ui.util.colorPairForConceptDiffResult
 import terminodiff.shared.ui.AppIconResource
 import terminodiff.shared.ui.icons.icon_hub
+import terminodiff.shared.ui.icons.icon_splitscreen_left
+import terminodiff.shared.ui.icons.icon_splitscreen_right
 import terminodiff.shared.ui.theme.DiffColors
 
 fun conceptDiffColumnSpecs(
@@ -173,8 +175,8 @@ private fun overallComparisonColumnSpec(
             val chipLabel: String =
                 if (data.isOnlyInLeft()) localizedStrings.onlyInLeft else localizedStrings.onlyInRight
             val onlyOneVersionIcon: ImageVector = when (data.isOnlyInLeft()) {
-                true -> AppIconResource.loadXmlImageVector(AppIconResource.IC_LOAD_LEFT_FILE)
-                else -> AppIconResource.loadXmlImageVector(AppIconResource.IC_LOAD_RIGHT_FILE)
+                true -> icon_splitscreen_left
+                else -> icon_splitscreen_right
             }
             DiffChip(
                 modifier = Modifier.fillMaxWidth(0.8f),

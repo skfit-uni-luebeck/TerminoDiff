@@ -37,6 +37,8 @@ import terminodiff.shared.ui.icons.icon_dark_mode
 import terminodiff.shared.ui.icons.icon_folder_open
 import terminodiff.shared.ui.icons.icon_light_mode
 import terminodiff.shared.ui.icons.icon_icon_mediation
+import terminodiff.shared.ui.icons.icon_refresh
+import terminodiff.shared.ui.icons.icon_translate
 import terminodiff.shared.ui.panes.conceptmap.ConceptMapDialog
 import terminodiff.shared.ui.panes.graph.showDiffGraph
 import java.awt.Cursor
@@ -46,12 +48,7 @@ typealias ImageRelativePath = String
 
 class AppIconResource {
     companion object {
-        const val IC_CHANGE_LANGUAGE: ImageRelativePath = "icons/ic-language.xml"
-        const val IC_LOAD_LEFT_FILE: ImageRelativePath = "icons/ic-open-left.xml"
-        const val IC_LOAD_RIGHT_FILE: ImageRelativePath = "icons/ic-open-right.xml"
-        const val IC_RELOAD: ImageRelativePath = "icons/ic-reload.xml"
-        const val IC_UNI_LUEBECK: ImageRelativePath = "icons/uzl-logo.xml"
-        const val IC_MARKDOWN_COPY: ImageRelativePath = "icons/markdown_copy_24px.xml"
+        const val IC_UNI_LUEBECK: ImageRelativePath = "uzl-logo.xml"
 
         fun loadFile(relativePath: ImageRelativePath): InputStream? =
             AppIconResource::class.java.classLoader.getResourceAsStream(relativePath)
@@ -61,15 +58,9 @@ class AppIconResource {
             stream.buffered().use {
                 it.readAllBytes().decodeToImageVector(LocalDensity.current)
             }
-
-        @Composable
-        fun loadXmlImageVector(relativePath: ImageRelativePath): ImageVector =
-            loadFile(relativePath)?.let { loadXmlImageVector(it) }
-                ?: throw IllegalArgumentException("the file $relativePath could not be loaded")
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TerminoDiffTopAppBar(
     localizedStrings: LocalizedStrings,
@@ -194,7 +185,7 @@ fun TerminoDiffTopAppBar(
             MouseOverPopup(localizedStrings.changeLanguage) {
                 IconActionButton(
                     onClick = onLocaleChange,
-                    imageRelativePath = AppIconResource.IC_CHANGE_LANGUAGE,
+                    imageVector = icon_translate,
                     label = localizedStrings.changeLanguage
                 )
             }
@@ -210,23 +201,12 @@ fun TerminoDiffTopAppBar(
             MouseOverPopup(localizedStrings.reload) {
                 IconActionButton(
                     onClick = onReload,
-                    imageRelativePath = AppIconResource.IC_RELOAD,
+                    imageVector = icon_refresh,
                     label = localizedStrings.reload
                 )
             }
         }
     )
-}
-
-@Composable
-private fun IconActionButton(
-    onClick: () -> Unit,
-    imageRelativePath: ImageRelativePath,
-    label: String,
-) {
-    IconButton(onClick = onClick) {
-        AppImageIcon(imageRelativePath, label)
-    }
 }
 
 @Composable

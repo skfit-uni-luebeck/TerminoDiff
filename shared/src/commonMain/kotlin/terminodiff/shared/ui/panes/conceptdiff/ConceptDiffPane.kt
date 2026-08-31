@@ -32,6 +32,7 @@ import terminodiff.shared.ui.panes.conceptdiff.propertydesignation.PropertyDesig
 import terminodiff.shared.ui.util.TerminodiffDialog
 import terminodiff.shared.ui.AppIconResource
 import terminodiff.shared.ui.icons.icon_content_copy
+import terminodiff.shared.ui.icons.icon_markdown_copy
 import terminodiff.shared.ui.panes.conceptmap.showRoCodeViewer
 import terminodiff.shared.ui.theme.DiffColors
 import terminodiff.shared.ui.theme.getDiffColors
@@ -167,8 +168,7 @@ fun ConceptDiffPanel(
                         diffDataContainer = diffDataContainer
                     )
                 }) {
-                    val icon = AppIconResource.loadXmlImageVector(AppIconResource.IC_MARKDOWN_COPY)
-                    Icon(icon, null)
+                    Icon(icon_markdown_copy, null)
                     Text(localizedStrings.markdown)
                 }
 

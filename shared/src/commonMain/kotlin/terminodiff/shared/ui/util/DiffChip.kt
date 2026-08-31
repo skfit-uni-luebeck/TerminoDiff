@@ -24,6 +24,8 @@ import terminodiff.shared.i18n.LocalizedStrings
 import terminodiff.shared.engine.metadata.MetadataComparison
 import terminodiff.shared.engine.metadata.MetadataComparisonResult
 import terminodiff.shared.ui.AppIconResource
+import terminodiff.shared.ui.icons.icon_splitscreen_left
+import terminodiff.shared.ui.icons.icon_splitscreen_right
 import terminodiff.shared.ui.theme.DiffColors
 
 @Composable
@@ -114,12 +116,12 @@ fun chipForDiffResult(
         KeyedListDiffResultKind.KEY_ONLY_IN_LEFT -> {
             colorPair = diffColors.redPair
             chipText = localizedStrings.onlyInLeft
-            chipIcon = AppIconResource.loadXmlImageVector(AppIconResource.IC_LOAD_LEFT_FILE)
+            chipIcon = icon_splitscreen_left
         }
         KeyedListDiffResultKind.KEY_ONLY_IN_RIGHT -> {
             colorPair = diffColors.redPair
             chipText = localizedStrings.onlyInRight
-            chipIcon = AppIconResource.loadXmlImageVector(AppIconResource.IC_LOAD_RIGHT_FILE)
+            chipIcon = icon_splitscreen_right
         }
         else -> {
             colorPair = diffColors.yellowPair

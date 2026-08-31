@@ -15,6 +15,8 @@ import terminodiff.shared.ui.AppIconResource
 import terminodiff.shared.ui.AppImageIcon
 import terminodiff.shared.ui.LoadListener
 import terminodiff.shared.ui.icons.icon_folder_open
+import terminodiff.shared.ui.icons.icon_splitscreen_left
+import terminodiff.shared.ui.icons.icon_splitscreen_right
 import terminodiff.shared.ui.theme.contentColor
 import java.io.File
 import javax.swing.JFileChooser
@@ -96,9 +98,9 @@ private fun FromFileScreen(
             colors = buttonColors,
             enabled = isValidPath,
             onClick = { onLoadLeftFile(InputResource(InputResource.Kind.FILE, selectedFile)) }) {
-            AppImageIcon(
-                relativePath = AppIconResource.IC_LOAD_LEFT_FILE,
-                label = localizedStrings.loadLeft,
+            Icon(
+                icon_splitscreen_left,
+                contentDescription = localizedStrings.loadLeft,
                 tint = buttonColors.contentColor(isValidPath)
             )
             Text(localizedStrings.loadLeft, color = buttonColors.contentColor(isValidPath))
@@ -108,9 +110,9 @@ private fun FromFileScreen(
             colors = buttonColors,
             enabled = isValidPath,
             onClick = { onLoadRightFile(InputResource(InputResource.Kind.FILE, selectedFile)) }) {
-            AppImageIcon(
-                relativePath = AppIconResource.IC_LOAD_RIGHT_FILE,
-                label = localizedStrings.loadRight,
+            Icon(
+                imageVector = icon_splitscreen_right,
+                contentDescription = localizedStrings.loadRight,
                 tint = buttonColors.contentColor(isValidPath)
             )
             Text(localizedStrings.loadRight, color = buttonColors.contentColor(isValidPath))
