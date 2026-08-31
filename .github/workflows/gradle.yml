@@ -29,12 +29,12 @@ jobs:
     - name: Gradle Ubuntu
       uses: gradle/gradle-build-action@093dfe9d598ec5a42246855d09b49dc76803c005
       with:
-        arguments: -PcomposeBuildOs=ubuntu packageDeb
+        arguments: packageDeb
     - name: Upload DEB
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: ubuntu
-        path: build/compose/binaries/main/deb
+        name: terminodiff-ubuntu
+        path: terminodiffApp/build/compose/binaries/main/deb
   build-windows:
     runs-on: windows-latest
     steps:
@@ -48,13 +48,13 @@ jobs:
     - name: Gradle Windows
       uses: gradle/gradle-build-action@093dfe9d598ec5a42246855d09b49dc76803c005
       with:
-        arguments: -PcomposeBuildOs=windows packageExe
+        arguments: packageExe
     - name: Upload EXE
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: windows
-        path: build/compose/binaries/main/exe
-  build-mac:
+        name: terminodiff-windows
+        path: terminodiffApp/build/compose/binaries/main/exe
+  build-mac-arm:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v7
@@ -67,10 +67,29 @@ jobs:
     - name: Gradle Mac
       uses: gradle/gradle-build-action@093dfe9d598ec5a42246855d09b49dc76803c005
       with:
-        arguments: -PcomposeBuildOs=mac packageDmg
+        arguments: packageDmg
     - name: Upload DMG
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: macos-intel
-        path: build/compose/binaries/main/dmg
+        name: terminodiff-macos-arm
+        path: terminodiffApp/build/compose/binaries/main/dmg
+  build-mac-intel:
+    runs-on: macos-26-intel
+    steps:
+      - uses: actions/checkout@v7
+      - name: JDK macOS
+        uses: actions/setup-java@v6
+        with:
+          java-package: jdk+fx
+          java-version: '17'
+          distribution: 'zulu'
+      - name: Gradle Mac
+        uses: gradle/gradle-build-action@093dfe9d598ec5a42246855d09b49dc76803c005
+        with:
+          arguments: packageDmg
+      - name: Upload DMG
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: terminodiff-macos-intel
+          path: terminodiffApp/build/compose/binaries/main/dmg
 

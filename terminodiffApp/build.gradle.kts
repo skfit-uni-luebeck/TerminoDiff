@@ -51,13 +51,26 @@ compose.desktop {
             copyright =
                 "Joshua Wiedekopf / Section for Clinical Research IT, Institute of Medical Biometry and Statistics, 2022-"
 
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
+
             macOS {
                 bundleID = "de.uzl.imbs.skfit.terminodiff"
-                iconFile = project.file("src/main/resources/macos/terminodiff.icns")
-                signing {
-                    sign.set(false)
-                }
-                targetFormats(TargetFormat.Dmg)
+                iconFile = project.file("src/main/resources/appicons/macos/terminodiff.icns")
+                appStore = false
+            }
+            windows {
+                iconFile.set(project.file("src/main/resources/appicons/windows/terminodiff.ico"))
+                perUserInstall = true
+                dirChooser = true
+                upgradeUuid = "ECFA19D9-D1F2-4AF5-9E5E-59A8F21C3A79"
+                menuGroup = "TerminoDiff"
+            }
+            linux {
+                iconFile.set(project.file("src/main/resources/appicons/common/terminodiff.png"))
+                rpmLicenseType = "GPL-3.0"
+                debMaintainer = "j.wiedekopf@uni-luebeck.de"
+                appCategory = "Development"
+                shortcut = true
             }
         }
     }
