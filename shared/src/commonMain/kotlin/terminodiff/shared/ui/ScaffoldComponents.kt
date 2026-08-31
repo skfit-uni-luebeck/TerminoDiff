@@ -50,7 +50,7 @@ class AppIconResource {
         const val IC_LOAD_LEFT_FILE: ImageRelativePath = "icons/ic-open-left.xml"
         const val IC_LOAD_RIGHT_FILE: ImageRelativePath = "icons/ic-open-right.xml"
         const val IC_RELOAD: ImageRelativePath = "icons/ic-reload.xml"
-        const val IC_UNI_LUEBECK: ImageRelativePath = "uzl-logo.xml"
+        const val IC_UNI_LUEBECK: ImageRelativePath = "icons/uzl-logo.xml"
         const val IC_MARKDOWN_COPY: ImageRelativePath = "icons/markdown_copy_24px.xml"
 
         fun loadFile(relativePath: ImageRelativePath): InputStream? =

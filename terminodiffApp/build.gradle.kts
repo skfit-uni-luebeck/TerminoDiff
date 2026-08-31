@@ -1,3 +1,5 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 plugins {
     alias(libs.plugins.javafxplugin)
     alias(libs.plugins.composeCompiler)
@@ -6,7 +8,7 @@ plugins {
 }
 
 group = "de.uzl.imbs.skfit"
-version = "3.0.0-dev"
+version = "3.0.0"
 
 repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
@@ -30,77 +32,37 @@ dependencies {
     implementation(libs.ca.gosyer.kotlin.multiplatform.appdirs)
 }
 
-//kotlin {
-//    jvm()
-//    sourceSets {
-//        jvmMain.dependencies {
-//
-//        }
-//    }
-//}
+javafx {
+    // add javafx to the classpath
+    version = "17.0.1"
+    modules("javafx.controls", "javafx.swing")
+}
 
-//
-//
-//dependencies {
-//    testImplementation(kotlin("test"))
-//    implementation(compose.desktop.currentOs)
-//    implementation(libs.org.jetbrains.kotlin.reflect)
-//    implementation(libs.org.jetbrains.kotlinx.coroutines.core)
-//    implementation(libs.ca.uhn.hapi.fhir.base)
-//    implementation(libs.ca.uhn.hapi.fhir.structures.r4)
-//    implementation(libs.ca.uhn.hapi.fhir.validation) {
-//        exclude(module = "ucum")
-//        exclude(group = "junit", module = "junit")
-//    }
-//    implementation(libs.org.slf4j.api)
-//    implementation(libs.org.apache.logging.log4j.api)
-//    implementation(libs.org.apache.logging.log4j.core)
-//    implementation(libs.org.apache.logging.log4j.slf4j2.impl)
-//    implementation(libs.org.apache.logging.log4j.layout.template.json)
-//    implementation(libs.org.apache.logging.log4j.api.kotlin)
-//    implementation(libs.org.jgrapht.core)
-//    implementation(libs.org.jgrapht.ext)
-//    implementation(libs.com.github.tomnelson.jungrapht.visualization)
-//    implementation(libs.com.github.tomnelson.jungrapht.layout)
-//    implementation(libs.net.mahdilamb.colormap)
-//    implementation(libs.li.flor.native.j.file.chooser)
-//    implementation(libs.javax.xml.bind.jaxb.api)
-//    implementation(libs.org.apache.commons.lang3)
-//    implementation(libs.com.formdev.flatlaf)
-//    implementation(libs.io.ktor.client.core)
-//    implementation(libs.io.ktor.client.cio)
-//    implementation(libs.me.xdrop.fuzzywuzzy)
-//    implementation(libs.com.fifesoft.rsyntaxtextarea)
-//    implementation(libs.org.apache.jena.core)
-//    implementation(libs.org.apache.jena.arq)
-//    implementation(libs.ca.gosyer.kotlin.multiplatform.appdirs)
-//}
+compose.desktop {
+    application {
+        mainClass = "terminodiff.TerminodiffMainKt"
+        nativeDistributions {
+            licenseFile.set(project.file("LICENSE"))
+            packageName = "TerminoDiff"
+            packageVersion = version.toString()
+            description = "Visually compare HL7 FHIR Terminology"
+            vendor =
+                "Section for Clinical Research IT, Institute of Medical Biometry and Statistics, University of Lübeck"
+            copyright =
+                "Joshua Wiedekopf / Section for Clinical Research IT, Institute of Medical Biometry and Statistics, 2022-"
 
-//tasks.test {
-//    useJUnitPlatform()
-//}
-//
-//java {
-//    sourceCompatibility = JavaVersion.VERSION_11
-//    targetCompatibility = JavaVersion.VERSION_11
-//}
-//
-//javafx {
-//    // add javafx to the classpath
-//    version = "17.0.1"
-//    modules("javafx.controls", "javafx.swing")
-//}
-//
-//kotlin {
-//    compilerOptions {
-//        jvmTarget.set(JvmTarget.JVM_11)
-//        optIn.add("kotlin.RequiresOptIn")
-//    }
-//}
-//
-//val composeBuildVersion: String by project
-//val composeBuildOs: String? by project
-//
+            macOS {
+                bundleID = "de.uzl.imbs.skfit.terminodiff"
+                iconFile = project.file("src/main/resources/macos/terminodiff.icns")
+                signing {
+                    sign.set(false)
+                }
+                targetFormats(TargetFormat.Dmg)
+            }
+        }
+    }
+}
+
 //compose.desktop {
 //    application {
 //        mainClass = "terminodiff.MainKt"
