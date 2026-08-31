@@ -5,9 +5,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Fireplace
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -35,6 +32,8 @@ import terminodiff.shared.ui.LoadListener
 import terminodiff.shared.ui.TabItem
 import terminodiff.shared.ui.Tabs
 import terminodiff.shared.ui.TabsContent
+import terminodiff.shared.ui.icons.icon_fireplace
+import terminodiff.shared.ui.icons.icon_save
 import terminodiff.shared.ui.panes.loaddata.panes.fromserver.FromServerScreenWrapper
 
 @Composable
@@ -184,12 +183,12 @@ sealed class LoadFilesTabItem(
     screen: @Composable (LocalizedStrings, FhirContext, LoadFilesScreenData) -> Unit,
 ) : TabItem<LoadFilesTabItem.LoadFilesScreenData>(TabItemSpec(icon, title, screen)) {
 
-    object FromFile : LoadFilesTabItem(icon = Icons.Default.Save, title = { fileSystem }, screen = { strings, _, data ->
+    object FromFile : LoadFilesTabItem(icon = icon_save, title = { fileSystem }, screen = { strings, _, data ->
         FromFileScreenWrapper(strings, data.onLoadLeft, data.onLoadRight)
     })
 
     object FromTerminologyServer : LoadFilesTabItem(
-        icon = Icons.Default.Fireplace,
+        icon = icon_fireplace,
         title = { fhirTerminologyServer },
         screen = { strings, fhirContext, data ->
             FromServerScreenWrapper(strings, data.onLoadLeft, data.onLoadRight, fhirContext)

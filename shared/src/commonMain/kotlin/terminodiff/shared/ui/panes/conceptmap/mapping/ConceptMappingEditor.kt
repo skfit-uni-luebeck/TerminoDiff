@@ -4,11 +4,6 @@ package terminodiff.shared.ui.panes.conceptmap.mapping
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.DoneAll
-import androidx.compose.material.icons.filled.Hub
-import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -40,6 +35,10 @@ import terminodiff.shared.ui.util.Dropdown
 import terminodiff.shared.ui.util.EditText
 import terminodiff.shared.ui.util.EditTextSpec
 import terminodiff.shared.ui.MouseOverPopup
+import terminodiff.shared.ui.icons.icon_add_circle
+import terminodiff.shared.ui.icons.icon_done_all
+import terminodiff.shared.ui.icons.icon_hub
+import terminodiff.shared.ui.icons.icon_remove_circle
 import terminodiff.shared.ui.util.ColumnSpec
 import terminodiff.shared.ui.util.LazyTable
 import terminodiff.shared.ui.util.columnSpecForMultiRow
@@ -119,7 +118,7 @@ fun MappingStatus(conceptMapState: ConceptMapState, localizedStrings: LocalizedS
         Button(onClick = {
             askAcceptAll(conceptMapState, localizedStrings)
         }, colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary), enabled = automappedCount > 0) {
-            Icon(Icons.Default.DoneAll, localizedStrings.acceptAll, tint = colorScheme.onPrimary)
+            Icon(icon_done_all, localizedStrings.acceptAll, tint = colorScheme.onPrimary)
             Text(text = localizedStrings.acceptAll, color = colorScheme.onPrimary)
         }
     }
@@ -187,7 +186,7 @@ private fun actionsColumnSpec(
             IconButton(onClick = {
                 showElementNeighborhood(element, useDarkTheme, localizedStrings)
             }, modifier = Modifier.size(24.dp)) {
-                Icon(Icons.Default.Hub, localizedStrings.graph)
+                Icon(icon_hub, localizedStrings.graph)
             }
             IconButton(onClick = {
                 element.targets.add(ConceptMapTarget(diffDataContainer).apply {
@@ -195,7 +194,7 @@ private fun actionsColumnSpec(
                 })
                 logger.debug { "Added target for $element" }
             }, modifier = Modifier.size(24.dp)) {
-                Icon(Icons.Default.AddCircle, localizedStrings.addTarget)
+                Icon(icon_add_circle, localizedStrings.addTarget)
             }
         }
     }
@@ -246,7 +245,7 @@ private fun targetColumnSpec(
                 td.targets.remove(target)
                 logger.debug { "Removed target $target for $td" }
             }, modifier = Modifier.size(24.dp)) {
-                Icon(Icons.Default.RemoveCircle, localizedStrings.addTarget)
+                Icon(icon_remove_circle, localizedStrings.addTarget)
             }
         }
         AutocompleteEditText(

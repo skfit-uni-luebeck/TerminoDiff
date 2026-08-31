@@ -1,8 +1,6 @@
 package terminodiff.shared.ui.panes.loaddata.panes
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +14,7 @@ import terminodiff.shared.ui.util.LabeledTextField
 import terminodiff.shared.ui.AppIconResource
 import terminodiff.shared.ui.AppImageIcon
 import terminodiff.shared.ui.LoadListener
+import terminodiff.shared.ui.icons.icon_folder_open
 import terminodiff.shared.ui.theme.contentColor
 import java.io.File
 import javax.swing.JFileChooser
@@ -85,7 +84,7 @@ private fun FromFileScreen(
                 AppPreferences.fileBrowserDirectory = it.toPath().parent.invariantSeparatorsPathString
             }
         }) {
-            Icon(Icons.Default.FolderOpen, localizedStrings.open)
+            Icon(icon_folder_open, localizedStrings.open)
             Text(localizedStrings.open)
         }
     }

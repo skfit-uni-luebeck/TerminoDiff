@@ -2,8 +2,6 @@ package terminodiff.shared.ui.panes.conceptdiff
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Hub
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -25,6 +23,7 @@ import terminodiff.shared.ui.util.NullableText
 import terminodiff.shared.ui.util.SelectableText
 import terminodiff.shared.ui.util.colorPairForConceptDiffResult
 import terminodiff.shared.ui.AppIconResource
+import terminodiff.shared.ui.icons.icon_hub
 import terminodiff.shared.ui.theme.DiffColors
 
 fun conceptDiffColumnSpecs(
@@ -46,14 +45,13 @@ private fun codeColumnSpec(localizedStrings: LocalizedStrings) =
         weight = 0.1f,
         instanceGetter = { code })
 
-@OptIn(ExperimentalMaterial3Api::class)
 private fun graphColumnSpec(localizedStrings: LocalizedStrings, onShowGraph: (String) -> Unit) =
     ColumnSpec<ConceptTableData>(title = localizedStrings.graph, weight = 0.08f) { tableData ->
         CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
             IconButton(onClick = {
                 onShowGraph.invoke(tableData.code)
             }, modifier = Modifier.size(24.dp)) {
-                Icon(Icons.Default.Hub, localizedStrings.graph)
+                Icon(icon_hub, localizedStrings.graph)
             }
         }
     }

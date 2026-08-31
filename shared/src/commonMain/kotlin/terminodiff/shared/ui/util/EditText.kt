@@ -2,11 +2,6 @@ package terminodiff.shared.ui.util
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +21,10 @@ import androidx.compose.ui.unit.dp
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import terminodiff.shared.i18n.LocalizedStrings
 import terminodiff.shared.ui.MouseOverPopup
+import terminodiff.shared.ui.icons.icon_arrow_drop_down
+import terminodiff.shared.ui.icons.icon_arrow_drop_up
+import terminodiff.shared.ui.icons.icon_error
+import terminodiff.shared.ui.icons.icon_warning
 import java.net.URI
 import java.util.*
 
@@ -38,8 +37,8 @@ fun iconForValidationResult(
     validationResult: EditTextSpec.ValidationResult?,
     localizedStrings: LocalizedStrings,
 ): Pair<ImageVector, String>? = when (validationResult) {
-    EditTextSpec.ValidationResult.INVALID -> Icons.Default.Error to localizedStrings.invalid
-    EditTextSpec.ValidationResult.WARN -> Icons.Default.Warning to localizedStrings.notRecommended
+    EditTextSpec.ValidationResult.INVALID -> icon_error to localizedStrings.invalid
+    EditTextSpec.ValidationResult.WARN -> icon_warning to localizedStrings.notRecommended
     else -> null
 }
 
@@ -243,8 +242,8 @@ fun <T> Dropdown(
                     expanded = !expanded
                 }) {
                     val icon = when (expanded) {
-                        true -> Icons.Filled.ArrowDropUp
-                        else -> Icons.Filled.ArrowDropDown
+                        true -> icon_arrow_drop_up
+                        else -> icon_arrow_drop_down
                     }
                     Icon(icon, null)
                 }

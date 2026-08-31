@@ -11,11 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.FolderOpen
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Mediation
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.*
@@ -38,6 +33,10 @@ import org.jetbrains.compose.resources.decodeToImageVector
 import terminodiff.shared.engine.resources.DiffDataContainer
 import terminodiff.shared.i18n.LocalizedStrings
 import terminodiff.shared.engine.conceptmap.ConceptMapState
+import terminodiff.shared.ui.icons.icon_dark_mode
+import terminodiff.shared.ui.icons.icon_folder_open
+import terminodiff.shared.ui.icons.icon_light_mode
+import terminodiff.shared.ui.icons.icon_icon_mediation
 import terminodiff.shared.ui.panes.conceptmap.ConceptMapDialog
 import terminodiff.shared.ui.panes.graph.showDiffGraph
 import java.awt.Cursor
@@ -167,7 +166,7 @@ fun TerminoDiffTopAppBar(
                         showConceptMapDialog = true
                         // TODO this is janky if the calculation takes a while, it would be good to have a progress indicator here
                     }, enabled = conceptMapState != null, colors = filledColors) {
-                        Icon(imageVector = Icons.Default.Mediation, contentDescription = localizedStrings.conceptMap)
+                        Icon(imageVector = icon_icon_mediation, contentDescription = localizedStrings.conceptMap)
                         Text(localizedStrings.conceptMap)
                     }
 
@@ -187,7 +186,7 @@ fun TerminoDiffTopAppBar(
             MouseOverPopup(localizedStrings.toggleDarkTheme) {
                 IconActionButton(
                     onClick = onChangeDarkTheme,
-                    imageVector = if (useDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                    imageVector = if (useDarkTheme) icon_light_mode else icon_dark_mode,
                     label = localizedStrings.toggleDarkTheme
                 )
             }
@@ -203,7 +202,7 @@ fun TerminoDiffTopAppBar(
             MouseOverPopup(localizedStrings.openResources) {
                 IconActionButton(
                     onClick = onShowLoadScreen,
-                    imageVector = Icons.Default.FolderOpen,
+                    imageVector = icon_folder_open,
                     label = localizedStrings.reload
                 )
             }

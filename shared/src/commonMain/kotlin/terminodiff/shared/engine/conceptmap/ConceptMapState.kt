@@ -1,9 +1,5 @@
 package terminodiff.shared.engine.conceptmap
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Verified
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.coroutines.coroutineScope
@@ -18,6 +14,9 @@ import terminodiff.shared.i18n.LocalizedStrings
 import terminodiff.shared.engine.graph.CombinedEdge
 import terminodiff.shared.engine.graph.CombinedVertex
 import terminodiff.shared.engine.graph.GraphSide
+import terminodiff.shared.ui.icons.icon_error
+import terminodiff.shared.ui.icons.icon_verified
+import terminodiff.shared.ui.icons.icon_wand_stars
 import terminodiff.shared.ui.panes.diff.NeighborhoodDisplay
 
 class ConceptMapState {
@@ -240,8 +239,9 @@ class ConceptMapTarget(diffDataContainer: DiffDataContainer) {
     }
 
     enum class MappingState(val image: ImageVector, val description: LocalizedStrings.() -> String) {
-        AUTO(Icons.Default.AutoAwesome, { automatic }), VALID(Icons.Default.Verified,
+        AUTO(icon_wand_stars, { automatic }), VALID(
+            icon_error,
             { ok }),
-        INVALID(Icons.Default.Error, { invalid })
+        INVALID(icon_verified, { invalid })
     }
 }

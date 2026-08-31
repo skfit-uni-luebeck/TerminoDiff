@@ -1,8 +1,6 @@
 package terminodiff.shared.ui.panes.conceptmap.meta
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -19,6 +17,7 @@ import libraries.sahruday.carousel.*
 import terminodiff.shared.i18n.LocalizedStrings
 import terminodiff.shared.engine.conceptmap.ConceptMapState
 import terminodiff.shared.engine.conceptmap.TerminodiffConceptMap
+import terminodiff.shared.ui.icons.icon_local_fire_department
 import terminodiff.shared.ui.util.EditTextGroup
 import terminodiff.shared.ui.util.EditTextGroupSpec
 import terminodiff.shared.ui.util.EditTextSpec
@@ -44,7 +43,7 @@ fun ConceptMapMetaEditorContent(
             },
                 colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary,
                     contentColor = colorScheme.onPrimary)) {
-                Icon(Icons.Default.LocalFireDepartment, "JSON", tint = colorScheme.onPrimary)
+                Icon(icon_local_fire_department, "JSON", tint = colorScheme.onPrimary)
                 Text("JSON")
             }
             ConceptMapMetaEditorForm(conceptMapState, localizedStrings, scrollState)

@@ -6,9 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountTree
-import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -41,6 +38,8 @@ import terminodiff.shared.ui.panes.conceptmap.meta.ConceptMapMetaEditorContent
 import terminodiff.shared.ui.TabItem
 import terminodiff.shared.ui.Tabs
 import terminodiff.shared.ui.TabsContent
+import terminodiff.shared.ui.icons.icon_account_tree
+import terminodiff.shared.ui.icons.icon_description
 import java.util.*
 
 @OptIn(ExperimentalPagerApi::class)
@@ -120,7 +119,7 @@ class ConceptMapTabItem(
 ) : TabItem<ConceptMapTabItem.ConceptMapScreenData>(TabItemSpec(icon, title, screen)) {
 
     companion object {
-        fun metadata() = ConceptMapTabItem(icon = Icons.Default.Description,
+        fun metadata() = ConceptMapTabItem(icon = icon_description,
             title = { metadata },
             screen = { strings, fhirContext, data ->
                 ConceptMapMetaEditorContent(conceptMapState = data.conceptMapState,
@@ -130,7 +129,7 @@ class ConceptMapTabItem(
             })
 
         fun conceptMapping(allConceptCodes: SortedMap<String, AnnotatedString>, diffDataContainer: DiffDataContainer) =
-            ConceptMapTabItem(icon = Icons.Default.AccountTree, title = { conceptMap }, screen = { strings, _, data ->
+            ConceptMapTabItem(icon = icon_account_tree, title = { conceptMap }, screen = { strings, _, data ->
                 ConceptMappingEditorContent(
                     localizedStrings = strings,
                     conceptMapState = data.conceptMapState,

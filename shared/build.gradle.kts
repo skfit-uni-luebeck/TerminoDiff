@@ -15,8 +15,6 @@ kotlin {
             implementation(libs.compose.components.resources)
             implementation(libs.compose.components.splitpane)
             implementation(libs.compose.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.org.jetbrains.kotlin.reflect)
             implementation(libs.org.jetbrains.kotlinx.coroutines.core)
             implementation(libs.ca.uhn.hapi.fhir.base)
@@ -44,7 +42,6 @@ kotlin {
             implementation(libs.org.apache.jena.core)
             implementation(libs.org.apache.jena.arq)
             implementation(libs.ca.gosyer.kotlin.multiplatform.appdirs)
-            implementation(libs.material.icons.extended)
         }
     }
 }

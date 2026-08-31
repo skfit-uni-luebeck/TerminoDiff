@@ -3,11 +3,6 @@ package terminodiff.shared.ui.panes.loaddata.panes.fromserver
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Compare
-import androidx.compose.material.icons.filled.Pending
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.*
@@ -34,6 +29,10 @@ import terminodiff.shared.ui.AppIconResource
 import terminodiff.shared.ui.ImageRelativePath
 import terminodiff.shared.ui.LoadListener
 import terminodiff.shared.ui.MouseOverPopup
+import terminodiff.shared.ui.icons.icon_cancel
+import terminodiff.shared.ui.icons.icon_check_circle
+import terminodiff.shared.ui.icons.icon_difference
+import terminodiff.shared.ui.icons.icon_pending
 import terminodiff.shared.ui.theme.contentColor
 import terminodiff.shared.ui.util.ColumnSpec
 import terminodiff.shared.ui.util.LazyTable
@@ -187,9 +186,9 @@ fun FromServerScreen(
 ) = Column(modifier = Modifier.fillMaxSize()) {
     val trailingIconPair: Pair<ImageVector, String> by derivedStateOf {
         when {
-            isResourceListPending -> Icons.Default.Pending to localizedStrings.pending
-            resourceList == null -> Icons.Default.Cancel to localizedStrings.invalid
-            else -> Icons.Default.CheckCircle to localizedStrings.valid
+            isResourceListPending -> icon_pending to localizedStrings.pending
+            resourceList == null -> icon_cancel to localizedStrings.invalid
+            else -> icon_check_circle to localizedStrings.valid
         }
     }
     val (trailingIcon, trailingIconDescription) = trailingIconPair
@@ -285,7 +284,7 @@ fun ListOfResources(
             text = localizedStrings.vread,
             selectedItem = selectedItem,
             baseServerUrl = baseServerUrl,
-            iconImageVector = Icons.Default.Compare,
+            iconImageVector = icon_difference,
             enabled = !vReadDisabled,
             tooltip = localizedStrings.vreadExplanationEnabled_.invoke(selectedItem != null && !vReadDisabled),
             onClick = onShowVReadDialog

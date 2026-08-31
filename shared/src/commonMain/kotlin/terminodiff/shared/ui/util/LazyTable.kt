@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Backspace
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.*
@@ -29,6 +26,8 @@ import libraries.sahruday.carousel.CarouselDefaults
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import terminodiff.shared.i18n.LocalizedStrings
 import terminodiff.shared.ui.MouseOverPopup
+import terminodiff.shared.ui.icons.icon_backspace
+import terminodiff.shared.ui.icons.icon_search
 import java.util.*
 
 @Composable
@@ -159,7 +158,8 @@ private fun <T> ResetIconButton(
     localizedStrings: LocalizedStrings,
 ) = CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
     IconButton(onClick = { searchState.clearAllSearch() }, enabled = searchState.isSearching) {
-        Icon(Icons.AutoMirrored.Filled.Backspace,
+        Icon(
+            icon_backspace,
             localizedStrings.clearSearch,
             modifier = Modifier.size(24.dp).padding(1.dp),
             tint = when (searchState.isSearching) {
@@ -249,7 +249,8 @@ fun <T> RowScope.HeaderCell(
                     MouseOverPopup(searchMouseover) {
                         IconButton(modifier = Modifier.size(32.dp).padding(4.dp),
                             onClick = { onSearchClick(columnName) }) {
-                            Icon(Icons.Default.Search,
+                            Icon(
+                                icon_search,
                                 contentDescription = localizedStrings.search,
                                 tint = contentColor)
                         }
@@ -259,7 +260,7 @@ fun <T> RowScope.HeaderCell(
                             IconButton(modifier = Modifier.size(32.dp).padding(4.dp),
                                 onClick = { onSearchClearClick(columnName) }) {
                                 Icon(
-                                    Icons.AutoMirrored.Filled.Backspace,
+                                    icon_backspace,
                                     contentDescription = localizedStrings.clearSearch,
                                     tint = contentColor)
                             }

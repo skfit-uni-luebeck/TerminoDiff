@@ -6,8 +6,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -33,6 +31,7 @@ import terminodiff.shared.ui.panes.conceptdiff.display.DisplayDetailsDialog
 import terminodiff.shared.ui.panes.conceptdiff.propertydesignation.PropertyDesignationDialog
 import terminodiff.shared.ui.util.TerminodiffDialog
 import terminodiff.shared.ui.AppIconResource
+import terminodiff.shared.ui.icons.icon_content_copy
 import terminodiff.shared.ui.panes.conceptmap.showRoCodeViewer
 import terminodiff.shared.ui.theme.DiffColors
 import terminodiff.shared.ui.theme.getDiffColors
@@ -160,7 +159,7 @@ fun ConceptDiffPanel(
                         chipFilteredTableData
                     )
                 }) {
-                    Icon(Icons.Default.ContentCopy, null)
+                    Icon(icon_content_copy, null)
                     Text(localizedStrings.copyCodeList)
                 }
                 OutlinedButton(onClick = {
