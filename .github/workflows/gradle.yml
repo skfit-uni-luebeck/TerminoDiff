@@ -31,7 +31,7 @@ jobs:
       with:
         arguments: packageDeb
     - name: Upload DEB
-      uses: actions/upload-artifact@v7.0.1
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: terminodiff-ubuntu
         path: terminodiffApp/build/compose/binaries/main/deb
@@ -50,7 +50,7 @@ jobs:
       with:
         arguments: packageExe
     - name: Upload EXE
-      uses: actions/upload-artifact@v7.0.1
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: terminodiff-windows
         path: terminodiffApp/build/compose/binaries/main/exe
@@ -69,7 +69,7 @@ jobs:
       with:
         arguments: packageDmg
     - name: Upload DMG
-      uses: actions/upload-artifact@v7.0.1
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: terminodiff-macos-arm
         path: terminodiffApp/build/compose/binaries/main/dmg
@@ -88,7 +88,7 @@ jobs:
         with:
           arguments: packageDmg
       - name: Upload DMG
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: terminodiff-macos-intel
           path: terminodiffApp/build/compose/binaries/main/dmg
