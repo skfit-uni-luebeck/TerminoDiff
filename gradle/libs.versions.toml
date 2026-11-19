@@ -2,7 +2,7 @@
 appdirs = "2.0.0"
 caUhnHapiFhir = "8.12.0"
 colormap = "0.9.511"
-flatlaf = "3.7.2"
+flatlaf = "3.8"
 composeMultiplatform = "1.12.0"
 composeMaterial3 = "1.12.0-alpha03"
 fuzzywuzzy = "1.4.0"
